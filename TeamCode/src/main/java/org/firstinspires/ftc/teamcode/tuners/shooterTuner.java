@@ -1,0 +1,103 @@
+package org.firstinspires.ftc.teamcode.tuners;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.util.Globals;
+
+@Config
+@Configurable
+@TeleOp(name="motor Tuner", group="tuners")
+
+public class shooterTuner extends OpMode {
+
+    /*
+    Values for a 1620 RPM motor:
+    P = 0.7
+    I = 1
+    D = 0.00685
+    alpha = 0.09
+     */
+
+    public PIDController pid;
+    public VoltageSensor voltageSensor;
+    public DcMotorEx motor1;
+
+
+    public static double p = 0, d = 0;
+    public static double i = 0 /*, f = 0*/;
+    public static double target = 0;
+    private final double MAX_VELOCITY = 2840.0;
+    private final double MIN_VELOCITY = 0;
+    private int previousTicks;
+    private long lastUpdateTime;
+
+    public static double alpha = 0;
+    private int velocity = 0;
+
+
+    @Override
+    public void init () {
+
+        pid = new PIDController(p, i ,d);
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
+
+        motor1 = hardwareMap.get(DcMotorEx.class, "motor0");
+        motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        previousTicks = motor1.getCurrentPosition();
+        lastUpdateTime = System.nanoTime();
+
+    }
+
+    @Override
+    public void loop () {
+
+        pid.setPID(p, i, d);
+
+        long currentTime = System.nanoTime();
+        double deltaTime = (currentTime - lastUpdateTime) / 1e9;
+        int currentTicks = motor1.getCurrentPosition();
+        int deltaTicks = currentTicks - previousTicks;
+
+        double velocityTicksPerSecond = deltaTicks / deltaTime;
+        velocity = (int) (alpha * velocityTicksPerSecond + (1 - alpha) * velocity);
+
+        previousTicks = currentTicks;
+        lastUpdateTime = currentTime;
+
+        double PID = pid.calculate(velocity, target);
+        double finalOutput = Globals.clamp(target + PID, MAX_VELOCITY, MIN_VELOCITY);
+
+        double velocityError = target - velocity;
+
+        motor1.setVelocity(finalOutput);
+
+        telemetry.addData("SDK Motor Velocity: ", motor1.getVelocity());
+        telemetry.addData("Velocity: ", velocity);
+        telemetry.addData("Target: ", target);
+        telemetry.addData("Output", finalOutput);
+        telemetry.addData("Controller Calculation", PID);
+        telemetry.addData("Error: ", velocityError);
+        telemetry.addData("Motor Current in AMPS", motor1.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("Voltage Sensor", voltageSensor.getVoltage());
+        telemetry.addData("Power: ", motor1.getPower());
+        telemetry.update();
+
+    }
+
+}
