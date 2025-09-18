@@ -19,6 +19,8 @@ public class Controller {
     private final Gamepad previousGamepad = new Gamepad();
     private final CommandScheduler scheduler;
 
+    private final double MIN_thresh = 0.1, MAX_thresh = 1;
+
     public Controller(Gamepad gamepad, CommandScheduler scheduler) {
 
         this.gamepad = gamepad;
@@ -31,50 +33,97 @@ public class Controller {
 
     public void buttonPressed(BooleanSupplier wasPressed, Supplier<Command> commandSupplier){
 
-        if(wasPressed.getAsBoolean()){
+        if (wasPressed.getAsBoolean()) {
+
             Command command = commandSupplier.get();
-            if(!scheduler.isScheduled(command)){
+
+            if (scheduler.isScheduled(command)) {
+                scheduler.cancel(command);
+            } else {
                 scheduler.schedule(command);
             }
+
         }
 
     }
 
-    public void buttonPressed(BooleanSupplier wasPressed, Supplier<Command> commandSupplier, Runnable action){
+    public void buttonPressed(BooleanSupplier wasPressed, Supplier<Command> commandSupplier, Runnable... actions){
 
-        if(wasPressed.getAsBoolean()){
+        if (wasPressed.getAsBoolean()) {
+
             Command command = commandSupplier.get();
-            if(!scheduler.isScheduled(command)){
-                scheduler.schedule(commandSupplier.get());
+
+            if (scheduler.isScheduled(command)) {
+                scheduler.cancel(command);
+            } else {
+                scheduler.schedule(command);
             }
-            action.run();
+
+            for (Runnable action : actions) {
+                action.run();
+            }
+
         }
 
     }
 
-    public void buttonPressed(BooleanSupplier wasPressed, Runnable action){
-
+    public void buttonPressed(BooleanSupplier wasPressed, Runnable... actions){
         if(wasPressed.getAsBoolean()){
-            action.run();
+            for(Runnable action : actions){
+                action.run();
+            }
         }
-
     }
 
-    public void triggerPressed(DoubleSupplier wasPressed, double threshold, Supplier<Command> commandSupplier){
+    public void triggerPressed(DoubleSupplier wasPressed, double threshold, Supplier<Command> commandSupplier) {
 
-        if(wasPressed.getAsDouble() > threshold){
-            scheduler.schedule(commandSupplier.get());
+        double thresh = Globals.clamp(threshold, MAX_thresh, MIN_thresh);
+
+        if (wasPressed.getAsDouble() > thresh) {
+
+            Command command = commandSupplier.get();
+
+            if (scheduler.isScheduled(command)) {
+                scheduler.cancel(command);
+            } else {
+                scheduler.schedule(command);
+            }
+
         }
-
     }
 
-    public void triggerPressed(DoubleSupplier wasPressed, double threshold, Supplier<Command> commandSupplier, Runnable action){
+    public void triggerPressed(DoubleSupplier wasPressed, double threshold, Supplier<Command> commandSupplier, Runnable... actions) {
 
-        if(wasPressed.getAsDouble() > threshold){
-            scheduler.schedule(commandSupplier.get());
-            action.run();
+        double thresh = Globals.clamp(threshold, MAX_thresh, MIN_thresh);
+
+        if (wasPressed.getAsDouble() > thresh) {
+            Command command = commandSupplier.get();
+
+
+            if (scheduler.isScheduled(command)) {
+                scheduler.cancel(command);
+            } else {
+                scheduler.schedule(command);
+            }
+
+            for(Runnable action : actions){
+                action.run();
+            }
+
         }
+    }
 
+    public void triggerPressed(DoubleSupplier wasPressed, double threshold, Runnable... actions) {
+
+        double thresh = Globals.clamp(threshold, MAX_thresh, MIN_thresh);
+
+        if (wasPressed.getAsDouble() > thresh) {
+
+            for(Runnable action : actions){
+                action.run();
+            }
+
+        }
     }
 
     public void triggerPressed(DoubleSupplier wasPressed, double threshold, Runnable action){

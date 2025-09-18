@@ -43,7 +43,7 @@ import org.firstinspires.ftc.teamcode.util.Command.*;
 
 public class Globals {
 
-    ElapsedTime GlobalTimer = new ElapsedTime();
+    public static ElapsedTime GlobalTimer = new ElapsedTime();
 
     public enum Alliance {
         RED,
@@ -156,7 +156,7 @@ public class Globals {
     }
 
     //Only Useful for anything other than Parallel Commands
-    public Command waitFor(double milliseconds){
+    public static Command waitFor(double milliseconds){
         return new Command() {
             boolean finished = false;
             @Override

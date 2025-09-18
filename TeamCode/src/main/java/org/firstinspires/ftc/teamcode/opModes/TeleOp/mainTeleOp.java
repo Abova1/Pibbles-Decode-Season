@@ -4,14 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.subsystems.*;
+import org.firstinspires.ftc.teamcode.subsystems.driveTrain.DT;
 import org.firstinspires.ftc.teamcode.util.*;
 import org.firstinspires.ftc.teamcode.util.Command.CommandScheduler;
 
 @TeleOp (name="Main TeleOp", group="OpModes")
 public class mainTeleOp extends LinearOpMode {
 
-    private DT DT;
+    private org.firstinspires.ftc.teamcode.subsystems.driveTrain.DT DT;
     private VoltageSensor vs;
     private Controller Driver, Operator;
 

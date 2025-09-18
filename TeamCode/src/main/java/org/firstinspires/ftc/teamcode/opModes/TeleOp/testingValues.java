@@ -18,14 +18,14 @@ public class testingValues extends LinearOpMode {
     private TeleHandler teleHandler;
     private CommandScheduler scheduler;
     private VoltageSensor vs;
-    private ElapsedTime timer;
-
-
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         scheduler = new CommandScheduler();
+
+        scheduler.clear();
+
         Driver = new Controller(gamepad1, scheduler);
 
         shooter = new Shooters(hardwareMap);
@@ -34,7 +34,7 @@ public class testingValues extends LinearOpMode {
 
         vs = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
-        timer = new ElapsedTime();
+        telemetry.setMsTransmissionInterval(175);
 
         waitForStart();
         if (isStopRequested()) return;
@@ -43,11 +43,13 @@ public class testingValues extends LinearOpMode {
 
             scheduler.run();
             teleHandler.TeleOp();
-            Driver.Update();
 
             telemetry.addData("Current State", teleHandler.getState());
+            telemetry.addData("Command Scheduled", scheduler.currentCommandScheduled());
             telemetry.addData("Voltage", vs.getVoltage());
+            telemetry.addData("Shooter Velocity", shooter.getVelo());
             telemetry.update();
+
         }
 
     }

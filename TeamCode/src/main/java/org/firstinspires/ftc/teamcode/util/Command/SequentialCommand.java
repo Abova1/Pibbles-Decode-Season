@@ -11,6 +11,11 @@ public class SequentialCommand implements Command {
         this.commands = new LinkedList<>(Arrays.asList(cmds));
     }
 
+    public Queue<Command> getCommands(){
+        return commands;
+    }
+
+
     @Override
     public void init() {
         if (!commands.isEmpty()) {
@@ -45,18 +50,20 @@ public class SequentialCommand implements Command {
     @Override
     public void end(boolean cancelled) {
 
-        if(cancelled){
-            for (Command command : new ArrayList<>(commands)){
+        if (cancelled) {
+            if (current != null) {
+                current.end(true);
+            }
+
+            for (Command command : new ArrayList<>(commands)) {
                 command.end(true);
             }
-        }
-
-        else {
+            commands.clear();
+        } else {
             if (current != null) {
                 current.end(false);
             }
         }
-
-
     }
+
 }

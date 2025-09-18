@@ -2,5 +2,5 @@ package org.firstinspires.ftc.teamcode.util;
 
 public enum RobotState {
     REGULAR,
-    INVERTED
+    //Any other State we need
 }

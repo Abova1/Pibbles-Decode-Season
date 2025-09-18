@@ -12,11 +12,10 @@ public class Shooters {
     private DcMotorEx motor1, motor2;
     private PIDWrapper veloPID = new PIDWrapper(new PIDController(Values.p, Values.i, Values.d));
 
-    private int previousTicks;
+    private double previousTicks;
     private long lastUpdateTime;
 
-    private final double alpha = Values.alpha;
-    private double target = 0;
+    public static double target = 0;
     private int Velocity = 0;
 
 
@@ -44,11 +43,11 @@ public class Shooters {
 
         long currentTime = System.nanoTime();
         double deltaTime = (currentTime - lastUpdateTime) / 1e9;
-        int currentTicks = (int) getPos();
-        int deltaTicks = currentTicks - previousTicks;
+        double currentTicks = getPos();
+        double deltaTicks = currentTicks - previousTicks;
 
         double velocityTicksPerSecond = deltaTicks / deltaTime;
-        Velocity = (int) (alpha * velocityTicksPerSecond + (1 - alpha) * Velocity);
+        Velocity = (int) (Values.alpha * velocityTicksPerSecond + (1 - Values.alpha) * Velocity);
 
         previousTicks = currentTicks;
         lastUpdateTime = currentTime;
@@ -58,12 +57,11 @@ public class Shooters {
 
     public void run(){
 
+        double velo = getVelo();
+
         veloPID.setPID(Values.p, Values.i, Values.d);
-        veloPID.VelocityRun(getVelo(), target, Values.MAX_VELOCITY, Values.MIN_VELOCITY, motor1);
+        veloPID.VelocityRun(velo, target, Values.MAX_VELOCITY, Values.MIN_VELOCITY, motor1);
 
     }
-
-    //Commands go under
-
 
 }

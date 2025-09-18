@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.util.Command;
 import java.util.*;
 
 public class CommandScheduler {
+
     private final List<Command> activeCommands = new ArrayList<>();
 
     public void schedule(Command command){
@@ -14,7 +15,7 @@ public class CommandScheduler {
 
     }
 
-    public void run() throws InterruptedException {
+    public void run(){
 
         Iterator<Command> iterator = activeCommands.iterator();
 
@@ -22,9 +23,7 @@ public class CommandScheduler {
 
             Command command = iterator.next();
 
-
             command.execute();
-
 
             if(command.isFinished()){
 
@@ -41,20 +40,45 @@ public class CommandScheduler {
         return activeCommands.contains(command);
     }
 
+    public void clear(){
+        activeCommands.clear();
+    }
+
+    public String currentCommandScheduled() {
+        if (activeCommands.isEmpty()) {
+            return "No command scheduled.";
+        }
+        return activeCommands.get(0).toString();
+    }
+
     public void cancel(Command command) {
+
         if(activeCommands.contains(command)){
             command.end(true);
             activeCommands.remove(command);
         }
+
+        if (command instanceof SequentialCommand) {
+            SequentialCommand sequentialCommand = (SequentialCommand) command;
+            for (Command cmd : sequentialCommand.getCommands()) {
+                cancel(cmd);
+            }
+        }
+
+
+        if (command instanceof ParallelCommand) {
+            ParallelCommand parallelCommand = (ParallelCommand) command;
+            for (Command cmd : parallelCommand.getCommands()) {
+                cancel(cmd);
+            }
+        }
+
     }
 
     public void cancelAll() {
 
-        for (Command cmd : new ArrayList<>(activeCommands)) {
-            cancel(cmd);
-            if (cmd.isFinished()) {
-                activeCommands.remove(cmd);
-            }
+        for (Command command : new ArrayList<>(activeCommands)) {
+            cancel(command);
         }
 
     }

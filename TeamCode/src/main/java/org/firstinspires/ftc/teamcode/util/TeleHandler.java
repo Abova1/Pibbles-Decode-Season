@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import org.firstinspires.ftc.teamcode.subsystems.shooter.Commands.*;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooters;
-import org.firstinspires.ftc.teamcode.util.Command.CommandScheduler;
-import org.firstinspires.ftc.teamcode.subsystems.*;
+import org.firstinspires.ftc.teamcode.util.Command.*;
 
 
 public class TeleHandler {
@@ -10,10 +10,11 @@ public class TeleHandler {
     private RobotState state = RobotState.REGULAR;
     private Shooters shooter;
     private Controller Driver, Operator;
-
-
-    private Globals Globals;
     private CommandScheduler scheduler;
+
+    private Command maxVeloCommand;
+    private Command minVeloCommand;
+
 
 
     public TeleHandler(Controller driver, CommandScheduler scheduler, Shooters shooter){
@@ -21,6 +22,9 @@ public class TeleHandler {
         this.Driver = driver;
         this.scheduler = scheduler;
         this.shooter = shooter;
+
+        maxVeloCommand = new maxVelocityCommand();
+        minVeloCommand = new minVelocityCommand();
 
     }
 
@@ -30,18 +34,17 @@ public class TeleHandler {
 
     public void TeleOp (){
 
+        shooter.run();
 
         switch (state){
 
             case REGULAR:
 
+                Driver.buttonPressed(Driver::a, () -> maxVeloCommand);
+                Driver.buttonPressed(Driver::b, () -> minVeloCommand);
 
             break;
 
-            case INVERTED:
-
-
-                break;
 
         }
 

@@ -8,5 +8,6 @@ class Values {
     public static double alpha = 0.09;
     public static double MAX_VELOCITY = 3100;
     public static double MIN_VELOCITY = 0;
+    public static boolean cancelPreviousCommand = false;
 
 }
