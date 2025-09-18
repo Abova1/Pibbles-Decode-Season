@@ -6,9 +6,10 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import java.util.List;
-
+@TeleOp(name="Motif AprilTag Limelight", group="Vision")
 public class MotifAprilTagLimelight extends OpMode {
 
     private Limelight3A limelight;
