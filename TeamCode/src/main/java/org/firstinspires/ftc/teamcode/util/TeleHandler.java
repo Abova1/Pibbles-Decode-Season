@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import com.arcrobotics.ftclib.command.Subsystem;
-
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooters;
 import org.firstinspires.ftc.teamcode.util.Command.CommandScheduler;
 import org.firstinspires.ftc.teamcode.subsystems.*;

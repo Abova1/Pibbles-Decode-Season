@@ -10,15 +10,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.Globals;
 
 @Config
 @Configurable
-@TeleOp(name="motor Tuner", group="tuners")
+@TeleOp(name="Velocity Tuner", group="tuners")
 
-public class shooterTuner extends OpMode {
+public class velocityTuner extends OpMode {
 
     /*
     Values for a 1620 RPM motor:
@@ -28,7 +27,7 @@ public class shooterTuner extends OpMode {
     alpha = 0.09
      */
 
-    public PIDController pid;
+    public PIDController controller;
     public VoltageSensor voltageSensor;
     public DcMotorEx motor1;
 
@@ -36,7 +35,7 @@ public class shooterTuner extends OpMode {
     public static double p = 0, d = 0;
     public static double i = 0 /*, f = 0*/;
     public static double target = 0;
-    private final double MAX_VELOCITY = 2840.0;
+    private final double MAX_VELOCITY = 3100;
     private final double MIN_VELOCITY = 0;
     private int previousTicks;
     private long lastUpdateTime;
@@ -48,7 +47,7 @@ public class shooterTuner extends OpMode {
     @Override
     public void init () {
 
-        pid = new PIDController(p, i ,d);
+        controller = new PIDController(p, i ,d);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -67,7 +66,7 @@ public class shooterTuner extends OpMode {
     @Override
     public void loop () {
 
-        pid.setPID(p, i, d);
+        controller.setPID(p, i, d);
 
         long currentTime = System.nanoTime();
         double deltaTime = (currentTime - lastUpdateTime) / 1e9;
@@ -80,7 +79,7 @@ public class shooterTuner extends OpMode {
         previousTicks = currentTicks;
         lastUpdateTime = currentTime;
 
-        double PID = pid.calculate(velocity, target);
+        double PID = controller.calculate(velocity, target);
         double finalOutput = Globals.clamp(target + PID, MAX_VELOCITY, MIN_VELOCITY);
 
         double velocityError = target - velocity;

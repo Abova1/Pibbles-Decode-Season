@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.vision.Color;
 
 import android.os.Environment;
 
@@ -14,7 +14,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RedSampleLocator extends OpenCvPipeline{
+public class BlueSampleLocator extends OpenCvPipeline {
 
     Detection sample = new Detection();
 
@@ -24,19 +24,18 @@ public class RedSampleLocator extends OpenCvPipeline{
 
     public int yellowHeight = Values.yellowHeight, yellowWidth = Values.yellowWidth;
 
-    public int redCenterX = Values.redCenterX, redCenterY = Values.redCenterY;
-    public int redOrientation = Values.redOrientation;
-    public int redHeight = Values.redHeight, redWidth = Values.redWidth;
-
+    public int blueCenterX = Values.blueCenterX, blueCenterY = Values.blueCenterY;
+    public int blueOrientation = Values.blueOrientation;
+    public int blueHeight = Values.blueHeight, blueWidth = Values.blueWidth;
     public boolean SS = Values.SS;
     public String YellowStreamInfo = Values.YellowStreamInfo;
-    public String redStreamInfo = Values.redStreamInfo;
+    public String blueStreamInfo = Values.BlueStreamInfo;
     public String YellowSSInfo = Values.YellowSSInfo;
-    public String redSSInfo = Values.redSSInfo;
+    public String blueSSInfo = Values.BlueSSInfo;
 
     Mat hsv = new Mat();
     Mat yellowMask = new Mat();
-    Mat redMask = new Mat();
+    Mat blueMask = new Mat();
     double CameraMidPointX;
     double CameraMidPointY;
 
@@ -51,20 +50,19 @@ public class RedSampleLocator extends OpenCvPipeline{
         Scalar lowerYellow = new Scalar(20, 65, 75);
         Scalar upperYellow = new Scalar(65, 255, 255);
 
-        Scalar lowerRed = new Scalar(170, 100, 150);
-        Scalar upperRed = new Scalar(180, 255, 255);
+        Scalar lowerBlue = new Scalar(100, 150, 100);
+        Scalar upperBlue = new Scalar(165, 255, 255);
 
         Core.inRange(hsv, lowerYellow, upperYellow, yellowMask);
 
-        Core.inRange(hsv, lowerRed, upperRed, redMask);
-
+        Core.inRange(hsv, lowerBlue, upperBlue, blueMask);
 
 
         List<MatOfPoint> yellowContours = new ArrayList<>();
-        List<MatOfPoint> redContours = new ArrayList<>();
+        List<MatOfPoint> blueContours = new ArrayList<>();
 
         Imgproc.findContours(yellowMask, yellowContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-        Imgproc.findContours(redMask, redContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(blueMask, blueContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         Imgproc.circle(input, new Point( CameraMidPointX , CameraMidPointY), 6, new Scalar(20, 255, 50), -1);
 
         sample.detection(input,
@@ -76,25 +74,25 @@ public class RedSampleLocator extends OpenCvPipeline{
 
 
         sample.detection(input,
-                    "Red", redMask, redContours,
-                    redWidth, redHeight,
-                    redCenterX, redCenterY, redOrientation,
-                    0, 0
+                "blue", blueMask, blueContours,
+                blueWidth, blueHeight,
+                blueCenterX, blueCenterY, blueOrientation,
+                0, 0
         );
 
         YellowStreamInfo = sample.YellowInfo;
-        redStreamInfo = sample.RedInfo;
+        blueStreamInfo = sample.BlueInfo;
 
         if(SS){
-                String Path =  Environment.getExternalStorageDirectory().getPath() + System.currentTimeMillis() + ".png";
+            String Path =  Environment.getExternalStorageDirectory().getPath() + System.currentTimeMillis() + ".png";
 
-                Imgcodecs.imwrite(Path, input);
+            Imgcodecs.imwrite(Path, input);
 
-                YellowSSInfo = YellowStreamInfo;
-                redSSInfo = redStreamInfo;
+            YellowSSInfo = YellowStreamInfo;
+            blueSSInfo = blueStreamInfo;
 
 
-                SS = false;
+            SS = false;
         }
 
         return input;

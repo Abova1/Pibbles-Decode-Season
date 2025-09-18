@@ -18,12 +18,16 @@ public class PIDWrapper {
         this.PID = pid;
     }
 
-    public double PIDCalc(double current, double target){
-        return PID.calculate(current, target);
-    }
+    public double calc(double current, double target){
 
-    public double PIDFCalc(double current, double target){
-        return PIDF.calculate(current, target);
+        if(PIDF != null){
+            return PIDF.calculate(current, target);
+        }
+        else if(PID != null){
+            return PID.calculate(current, target);
+        }
+
+        return 0;
     }
 
     public void setPIDF(double p, double i, double d, double f){
@@ -34,24 +38,25 @@ public class PIDWrapper {
         PID.setPID(p, i, d);
     }
 
-    public void PositionRun(double current, double target, double MAX, double MIN, DcMotorEx... motors){
+    public void PositionRun(double current, double target, DcMotorEx... motors){
 
-        double power = PIDCalc(current, target);
-        double finalOutput = Globals.clamp(power, MAX, MIN);
+        double power = calc(current, target);
 
         for(DcMotorEx motor : motors){
-            motor.setPower(finalOutput);
+            motor.setPower(power);
         }
+
     }
 
     public void VelocityRun(double current, double target, double MAX, double MIN, DcMotorEx... motors) {
 
-        double pid = PIDCalc(current, target);
+        double pid = calc(current, target);
         double finalOutput = Globals.clamp(target + pid, MAX, MIN);
 
         for (DcMotorEx motor : motors) {
             motor.setVelocity(finalOutput);
         }
+
     }
 
 }

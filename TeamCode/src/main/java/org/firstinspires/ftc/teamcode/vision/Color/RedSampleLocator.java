@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.vision.Color;
 
 import android.os.Environment;
 
@@ -14,7 +14,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlueSampleLocator extends OpenCvPipeline {
+public class RedSampleLocator extends OpenCvPipeline{
 
     Detection sample = new Detection();
 
@@ -24,18 +24,19 @@ public class BlueSampleLocator extends OpenCvPipeline {
 
     public int yellowHeight = Values.yellowHeight, yellowWidth = Values.yellowWidth;
 
-    public int blueCenterX = Values.blueCenterX, blueCenterY = Values.blueCenterY;
-    public int blueOrientation = Values.blueOrientation;
-    public int blueHeight = Values.blueHeight, blueWidth = Values.blueWidth;
+    public int redCenterX = Values.redCenterX, redCenterY = Values.redCenterY;
+    public int redOrientation = Values.redOrientation;
+    public int redHeight = Values.redHeight, redWidth = Values.redWidth;
+
     public boolean SS = Values.SS;
     public String YellowStreamInfo = Values.YellowStreamInfo;
-    public String blueStreamInfo = Values.BlueStreamInfo;
+    public String redStreamInfo = Values.redStreamInfo;
     public String YellowSSInfo = Values.YellowSSInfo;
-    public String blueSSInfo = Values.BlueSSInfo;
+    public String redSSInfo = Values.redSSInfo;
 
     Mat hsv = new Mat();
     Mat yellowMask = new Mat();
-    Mat blueMask = new Mat();
+    Mat redMask = new Mat();
     double CameraMidPointX;
     double CameraMidPointY;
 
@@ -50,19 +51,20 @@ public class BlueSampleLocator extends OpenCvPipeline {
         Scalar lowerYellow = new Scalar(20, 65, 75);
         Scalar upperYellow = new Scalar(65, 255, 255);
 
-        Scalar lowerBlue = new Scalar(100, 150, 100);
-        Scalar upperBlue = new Scalar(165, 255, 255);
+        Scalar lowerRed = new Scalar(170, 100, 150);
+        Scalar upperRed = new Scalar(180, 255, 255);
 
         Core.inRange(hsv, lowerYellow, upperYellow, yellowMask);
 
-        Core.inRange(hsv, lowerBlue, upperBlue, blueMask);
+        Core.inRange(hsv, lowerRed, upperRed, redMask);
+
 
 
         List<MatOfPoint> yellowContours = new ArrayList<>();
-        List<MatOfPoint> blueContours = new ArrayList<>();
+        List<MatOfPoint> redContours = new ArrayList<>();
 
         Imgproc.findContours(yellowMask, yellowContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-        Imgproc.findContours(blueMask, blueContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(redMask, redContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         Imgproc.circle(input, new Point( CameraMidPointX , CameraMidPointY), 6, new Scalar(20, 255, 50), -1);
 
         sample.detection(input,
@@ -74,25 +76,25 @@ public class BlueSampleLocator extends OpenCvPipeline {
 
 
         sample.detection(input,
-                "blue", blueMask, blueContours,
-                blueWidth, blueHeight,
-                blueCenterX, blueCenterY, blueOrientation,
-                0, 0
+                    "Red", redMask, redContours,
+                    redWidth, redHeight,
+                    redCenterX, redCenterY, redOrientation,
+                    0, 0
         );
 
         YellowStreamInfo = sample.YellowInfo;
-        blueStreamInfo = sample.BlueInfo;
+        redStreamInfo = sample.RedInfo;
 
         if(SS){
-            String Path =  Environment.getExternalStorageDirectory().getPath() + System.currentTimeMillis() + ".png";
+                String Path =  Environment.getExternalStorageDirectory().getPath() + System.currentTimeMillis() + ".png";
 
-            Imgcodecs.imwrite(Path, input);
+                Imgcodecs.imwrite(Path, input);
 
-            YellowSSInfo = YellowStreamInfo;
-            blueSSInfo = blueStreamInfo;
+                YellowSSInfo = YellowStreamInfo;
+                redSSInfo = redStreamInfo;
 
 
-            SS = false;
+                SS = false;
         }
 
         return input;
