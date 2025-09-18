@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.arcrobotics.ftclib.controller.PDController;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -9,6 +10,7 @@ public class PIDWrapper {
 
     private PIDFController PIDF;
     private PIDController PID;
+    private PDController PD;
 
 
     public PIDWrapper(PIDFController pidf){
@@ -17,6 +19,10 @@ public class PIDWrapper {
     public PIDWrapper(PIDController pid) {
         this.PID = pid;
     }
+    public PIDWrapper(PDController pd){
+        this.PD = pd;
+    }
+
 
     public double calc(double current, double target){
 
@@ -25,6 +31,9 @@ public class PIDWrapper {
         }
         else if(PID != null){
             return PID.calculate(current, target);
+        }
+        else if(PD != null){
+            return PD.calculate(current, target);
         }
 
         return 0;
@@ -36,6 +45,10 @@ public class PIDWrapper {
 
     public void setPID(double p, double i, double d){
         PID.setPID(p, i, d);
+    }
+    public void setPD(double p, double d){
+        PD.setP(p);
+        PD.setD(d);
     }
 
     public void PositionRun(double current, double target, DcMotorEx... motors){
@@ -55,6 +68,26 @@ public class PIDWrapper {
 
         for (DcMotorEx motor : motors) {
             motor.setVelocity(finalOutput);
+        }
+
+    }
+
+    //for the limelight
+    public void TurretRun(double current, double target, double MAX, double MIN, double deadBand, double tolerance, DcMotorEx... motors){
+
+        double power = calc(current, target);
+        power = Globals.clamp(power, MAX, MIN);
+
+        if (Math.abs(current) < tolerance) {
+            power = 0;
+        }
+
+        if (Math.abs(power) < deadBand) {
+            power = 0;
+        }
+
+        for(DcMotorEx motor : motors){
+            motor.setPower(power);
         }
 
     }
