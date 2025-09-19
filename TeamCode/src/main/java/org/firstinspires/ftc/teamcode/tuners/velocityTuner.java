@@ -31,9 +31,8 @@ public class velocityTuner extends OpMode {
     public VoltageSensor voltageSensor;
     public DcMotorEx motor1;
 
-
-    public static double p = 0, d = 0;
-    public static double i = 0 /*, f = 0*/;
+    public static double kP = 0, kD = 0;
+    public static double kI = 0 /*, f = 0*/;
     public static double target = 0;
     private final double MAX_VELOCITY = 3100;
     private final double MIN_VELOCITY = 0;
@@ -47,7 +46,7 @@ public class velocityTuner extends OpMode {
     @Override
     public void init () {
 
-        controller = new PIDController(p, i ,d);
+        controller = new PIDController(kP, kI, kD);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -66,7 +65,7 @@ public class velocityTuner extends OpMode {
     @Override
     public void loop () {
 
-        controller.setPID(p, i, d);
+        controller.setPID(kP, kI, kD);
 
         long currentTime = System.nanoTime();
         double deltaTime = (currentTime - lastUpdateTime) / 1e9;

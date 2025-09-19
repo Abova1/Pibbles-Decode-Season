@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.teamcode.util.Globals;
+
 import org.firstinspires.ftc.teamcode.util.PIDWrapper;
 
 
@@ -37,19 +37,16 @@ public class tuneableApriltagDetection extends OpMode {
     private DcMotorEx LLmotor;
 
     public static double
-            p = 0 /* proportional gain (tune this) */,
-            d = 0
+            kP = 0 /* proportional gain (tune this) */,
+            kD = 0
     ;
 
     public double targetTx = 0;
     public static double txTolerance = 1.5;
-    public static double deadband = 0.02; // don’t bother running motor if |power| < 0.02
+    public static double powerThreshold = 0.02; // don’t bother running motor if |power| < 0.02
     public static double maxPower = 0.3;
-
-    private PIDWrapper controller = new PIDWrapper(new PDController(p, d));
-
-
-    public static String goalColor = "red";
+    private PIDWrapper controller = new PIDWrapper(new PDController(kP, kD));
+    public static String Color = "red";
 
 
     @Override
@@ -78,12 +75,12 @@ public class tuneableApriltagDetection extends OpMode {
     public void loop() {
         LLStatus status = limelight.getStatus();
 
-        controller.setPD(p,d);
+        controller.setPD(kP, kD);
 
-        if(goalColor.equalsIgnoreCase("red")){
+        if(Color.equalsIgnoreCase("red")){
             limelight.pipelineSwitch(1);
         }
-        else if(goalColor.equalsIgnoreCase("blue")){
+        else if(Color.equalsIgnoreCase("blue")){
             limelight.pipelineSwitch(2);
         }
 
@@ -104,7 +101,7 @@ public class tuneableApriltagDetection extends OpMode {
             telemetry.addData("Target X", tx);
             telemetry.addData("Target Y", ty);
 
-            controller.TurretRun(tx, targetTx, maxPower, -maxPower, deadband, txTolerance, LLmotor);
+            controller.TurretRun(tx, targetTx, maxPower, -maxPower, powerThreshold, txTolerance, LLmotor);
 
         } else {
             LLmotor.setPower(0);

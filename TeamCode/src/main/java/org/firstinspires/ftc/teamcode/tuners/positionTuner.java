@@ -21,8 +21,8 @@ public class positionTuner extends OpMode {
     private DcMotorEx motor1;
     private VoltageSensor voltageSensor;
 
-    public static double p = 0, d = 0;
-    public static double i = 0 , f = 0;
+    public static double kP = 0, kD = 0;
+    public static double kI = 0 , F = 0;
     public static double target = 0;
 
     @Override
@@ -30,7 +30,7 @@ public class positionTuner extends OpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        controller = new PIDFController(p, i, d, f);
+        controller = new PIDFController(kP, kI, kD, F);
 
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
@@ -46,7 +46,7 @@ public class positionTuner extends OpMode {
     @Override
     public void loop() {
 
-        controller.setPIDF(p,i,d,f);
+        controller.setPIDF(kP, kI, kD, F);
 
         double currentPos = motor1.getCurrentPosition();
         double error = target - currentPos;
