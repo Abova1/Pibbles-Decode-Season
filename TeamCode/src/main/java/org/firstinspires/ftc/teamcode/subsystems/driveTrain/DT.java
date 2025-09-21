@@ -3,14 +3,18 @@ package org.firstinspires.ftc.teamcode.subsystems.driveTrain;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
+
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensors;
 
 public class DT {
 
-    private VoltageSensor sensor;
     private DcMotorEx FL, BL, FR, BR;
+    private Sensors sensors;
 
-    public DT (HardwareMap hardwareMap, VoltageSensor sensor) {
+    public DT (HardwareMap hardwareMap) {
+
+        sensors = new Sensors(hardwareMap);
+        sensors.initIMU();
 
         FL = hardwareMap.get(DcMotorEx.class, "FL");
         BL = hardwareMap.get(DcMotorEx.class, "BL");
@@ -20,12 +24,10 @@ public class DT {
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.sensor = sensor;
-
     }
 
     public void Drive (double y, double x, double rx) {
-        double voltage = sensor.getVoltage();
+        double voltage = sensors.getVoltage();
         double shorterOutPut = 0.75;
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);

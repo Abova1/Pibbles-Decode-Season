@@ -50,6 +50,28 @@ public class Globals {
         BLUE
     }
 
+    public enum MOTOR_TYPES{
+
+        RPM_6000(6000),
+        RPM_1620(1620),
+        RPM_1150(1150),
+        RPM_435(435),
+        RPM_312(312),
+        RPM_117(117),
+        RPM_84( 84),
+        RPM_60(60),
+        RPM_30(30);
+
+        public double RPM;
+
+        MOTOR_TYPES(double RPM)  {
+            this.RPM = RPM;
+        }
+
+
+    }
+
+
     public enum CHUB_SERVO_TYPES {
         AXON_MAX(60.0 / 0.140, 28),
         AXON_MINI(60.0 / 0.110, 20),
@@ -153,6 +175,12 @@ public class Globals {
             return min;
         }
         return value;
+    }
+    public static double wrapTo(double value, double MAX, double MIN){
+
+        double range = MAX - MIN;
+
+        return ((value - MIN) % range + range) % range + MIN;
     }
 
     //Only Useful for anything other than Parallel Commands

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.util.Command.CommandScheduler;
 @TeleOp (name="Main TeleOp", group="OpModes")
 public class mainTeleOp extends LinearOpMode {
 
-    private org.firstinspires.ftc.teamcode.subsystems.driveTrain.DT DT;
+    private DT DT;
     private VoltageSensor vs;
     private Controller Driver, Operator;
 
@@ -22,7 +22,7 @@ public class mainTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         vs = hardwareMap.get(VoltageSensor.class, "Control Hub");
-        DT = new DT(hardwareMap, vs);
+        DT = new DT(hardwareMap);
 
         waitForStart();
 

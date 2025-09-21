@@ -40,8 +40,6 @@ public class TeleHandler {
 
             case REGULAR:
 
-                Driver.buttonPressed(Driver::a, () -> maxVeloCommand);
-                Driver.buttonPressed(Driver::b, () -> minVeloCommand);
 
             break;
 

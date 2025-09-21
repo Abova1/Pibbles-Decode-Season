@@ -14,7 +14,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
-@TeleOp
+@TeleOp(name="Purple Vision", group="Vision")
 public class redVisionSS extends LinearOpMode {
     OpenCvCamera webcam;
     RedSampleLocator pipeline;
