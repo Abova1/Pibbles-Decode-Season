@@ -99,8 +99,6 @@ public class HeadingCorrectionDrivetestLimelight extends OpMode {
             How you would implement this is
 
             double input = headingError + min_command;
-            1 + 0.05 = 1.05;
-            1 + -0.05
 
             if (Math.abs(heading_error) > 1.0) {
 
