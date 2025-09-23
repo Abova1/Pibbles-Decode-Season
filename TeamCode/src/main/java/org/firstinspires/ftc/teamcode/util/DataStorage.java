@@ -4,9 +4,6 @@ import android.os.Environment;
 
 import java.io.*;
 
-
-// 100% ChatGPT but this WILL be reused
-
 public class DataStorage {
 
 
