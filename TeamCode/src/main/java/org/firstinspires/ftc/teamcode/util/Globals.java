@@ -50,22 +50,42 @@ public class Globals {
         BLUE
     }
 
-    public enum MOTOR_TYPES{
+    public enum pipelines{
 
-        RPM_6000(6000),
-        RPM_1620(1620),
-        RPM_1150(1150),
-        RPM_435(435),
-        RPM_312(312),
-        RPM_117(117),
-        RPM_84( 84),
-        RPM_60(60),
-        RPM_30(30);
+        Red(1),
+        Blue(2),
+        Motif(3);
 
-        public double RPM;
+        public int index;
 
-        MOTOR_TYPES(double RPM)  {
-            this.RPM = RPM;
+        pipelines(int index){
+
+            this.index = index;
+
+        }
+
+
+
+    }
+
+    public enum MOTOR_TICKS{
+
+        RPM_6000(28),
+        RPM_1620(103.8),
+        RPM_1150(145.1),
+        RPM_435(384.5),
+        RPM_312(537.7),
+        RPM_223(751.8),
+        RPM_117(1425.1),
+        RPM_84( 1993.6),
+        RPM_60(2786.2),
+        RPM_43(	3895.9),
+        RPM_30(5281.1);
+
+        public double ticksPerRev;
+
+        MOTOR_TICKS(double ticksPerRev)  {
+            this.ticksPerRev = ticksPerRev;
         }
 
 

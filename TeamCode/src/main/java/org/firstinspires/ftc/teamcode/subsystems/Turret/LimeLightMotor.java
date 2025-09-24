@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensors;
-import org.firstinspires.ftc.teamcode.util.Globals;
 import org.firstinspires.ftc.teamcode.util.PIDWrapper;
 
 public class LimeLightMotor {
@@ -17,8 +16,8 @@ public class LimeLightMotor {
     private Sensors sensors;
 
     public static double targetHeading;
-    private double MAX = 1 ;
-    private double MIN = -1;
+    private double MAX = 360;
+    private double MIN = 1;
 
     public LimeLightMotor(HardwareMap hardwareMap){
 
@@ -37,13 +36,17 @@ public class LimeLightMotor {
 
     }
 
+    public void setPower(double power){
+        motor.setPower(power);
+    }
+
+    public double getPower(){
+        return motor.getPower();
+    }
+
     public double getPos(){
         return motor.getCurrentPosition();
     }
-    public double getSDKTicksPerRev(){
-        return motor.getMotorType().getTicksPerRev();
-    }
-
 
     public void reset(){
 
@@ -53,12 +56,18 @@ public class LimeLightMotor {
     }
 
     public double getHeading() {
+        double TPR;
+
+        if(Values.GearRatio != 0){
+            TPR = Values.TPR * Values.GearRatio;
+        } else {
+            TPR = Values.TPR;
+        }
 
         double ticks = getPos();
-        double degrees = (ticks / Values.TPR) * 360;
-        double heading = (long) (((degrees % 360) + 360) % 360);
+        double degrees = (ticks / TPR) * 360;
 
-        return Globals.clamp(heading, 359, 0.5);
+        return (((degrees % 360) + 360) % 360);
     }
 
     public void run(){
@@ -67,7 +76,7 @@ public class LimeLightMotor {
 
         headingController.setPID(Values.p, Values.i, Values.d);
 
-        headingController.TurretRun(currentHeading, targetHeading, MAX, MIN, 1 , motor);
+        headingController.TurretRun(currentHeading, targetHeading, MAX, MIN, 0.5 , motor);
 
     }
 

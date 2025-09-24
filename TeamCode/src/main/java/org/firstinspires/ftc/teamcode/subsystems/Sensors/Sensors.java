@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.Sensors;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -15,13 +16,13 @@ public class Sensors {
     private GoBildaPinpointDriver pinpoint;
     private VoltageSensor voltageSensor;
     private ColorSensor colorSensor;
+    private DigitalChannel absEncoder;
 
 
     public Sensors(HardwareMap hardwareMap){
 
         imu = hardwareMap.get(IMU.class, "imu");
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
-
 
         //Don't use until needed
 //        colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");

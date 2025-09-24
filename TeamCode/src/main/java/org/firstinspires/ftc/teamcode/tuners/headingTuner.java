@@ -22,12 +22,12 @@ public class headingTuner extends OpMode {
     private PIDController controller;
     public static double p = 0, i = 0, d = 0;
 
-    public static double ticksPerRev = 28;
+    public static double ticksPerRev = 103.8; // the more TPR the more accurate
     public static double targetHeading = 0;
     public static double MAX = 1;
     public static double MIN = -1;
     private double previousHeading;
-    private long heading;
+    private double heading;
 
 
     @Override
@@ -55,26 +55,24 @@ public class headingTuner extends OpMode {
         double ticks = motor.getCurrentPosition();
         double degrees = (ticks / ticksPerRev) * 360;
 
-        heading = (long) (((degrees % 360) + 360) % 360);
-
-        double finalHeading = Globals.clamp(heading, 359, 0.5);
+        heading = (((degrees % 360) + 360) % 360);
 
 
-        if(heading >= 359.1){
+        if(heading > 359){
             targetHeading = 1;
         }
-        else if(heading <= 0.1){
+        else if(heading <= 0.5){
             targetHeading = 358;
         }
 
 
-        double power = controller.calculate(finalHeading, targetHeading);
+        double power = controller.calculate(heading, targetHeading);
 
         power = Globals.clamp(power, MAX, MIN);
 
         motor.setPower(power);
 
-        double headingError = targetHeading - finalHeading;
+        double headingError = targetHeading - heading;
 
         telemetry.addData("Calculation", power);
         telemetry.addData("Power", motor.getPower());
