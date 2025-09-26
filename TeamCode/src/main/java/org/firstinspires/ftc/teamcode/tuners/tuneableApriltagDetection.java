@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision.Limelight;
+package org.firstinspires.ftc.teamcode.tuners;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -42,8 +42,8 @@ public class tuneableApriltagDetection extends OpMode {
     ;
 
     public double targetTx = 0;
-    public static double txTolerance = 1.5;
     public static double powerThreshold = 0.02; // don’t bother running motor if |power| < 0.02
+
     public static double maxPower = 0.3;
     private PIDWrapper controller = new PIDWrapper(new PDController(kP, kD));
     public static String Color = "red";
@@ -102,7 +102,7 @@ public class tuneableApriltagDetection extends OpMode {
             telemetry.addData("Target X", tx);
             telemetry.addData("Target Y", ty);
 
-            controller.TurretRun(tx, targetTx, maxPower, -maxPower, powerThreshold, txTolerance, LLmotor);
+            controller.TurretRun(tx, targetTx, maxPower, -maxPower, 1 , LLmotor);
 
         } else {
             LLmotor.setPower(0);

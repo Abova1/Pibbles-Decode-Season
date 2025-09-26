@@ -50,6 +50,48 @@ public class Globals {
         BLUE
     }
 
+    public enum pipelines{
+
+        Red(1),
+        Blue(2),
+        Motif(3);
+
+        public int index;
+
+        pipelines(int index){
+
+            this.index = index;
+
+        }
+
+
+
+    }
+
+    public enum MOTOR_TICKS{
+
+        RPM_6000(28),
+        RPM_1620(103.8),
+        RPM_1150(145.1),
+        RPM_435(384.5),
+        RPM_312(537.7),
+        RPM_223(751.8),
+        RPM_117(1425.1),
+        RPM_84( 1993.6),
+        RPM_60(2786.2),
+        RPM_43(	3895.9),
+        RPM_30(5281.1);
+
+        public double ticksPerRev;
+
+        MOTOR_TICKS(double ticksPerRev)  {
+            this.ticksPerRev = ticksPerRev;
+        }
+
+
+    }
+
+
     public enum CHUB_SERVO_TYPES {
         AXON_MAX(60.0 / 0.140, 28),
         AXON_MINI(60.0 / 0.110, 20),
@@ -153,6 +195,12 @@ public class Globals {
             return min;
         }
         return value;
+    }
+    public static double wrapTo(double value, double MAX, double MIN){
+
+        double range = MAX - MIN;
+
+        return ((value - MIN) % range + range) % range + MIN;
     }
 
     //Only Useful for anything other than Parallel Commands

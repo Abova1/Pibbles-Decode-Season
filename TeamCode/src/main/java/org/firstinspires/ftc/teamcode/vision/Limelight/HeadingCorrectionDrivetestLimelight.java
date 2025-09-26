@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.vision.Limelight;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.controller.PController;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLStatus;
@@ -18,12 +19,20 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp(name="Configurable AprilTag Limelight", group="Vision")
 public class HeadingCorrectionDrivetestLimelight extends OpMode {
 
+    // TODO: 9/20/2025 this seems wrong for some reason check out field centric code to see how to manipulate heading better
+
     /*
      pipeline 1 is red goal
     pipeline 2 is blue goal
     pipeline 3 is motif
      */
     public static double Kp = -0.1;
+
+    //theres also a PContoller for ftclib
+    public PController controller;
+
+
+
     public static double min_command = 0.05;
 
     private Limelight3A limelight;
@@ -84,6 +93,23 @@ public class HeadingCorrectionDrivetestLimelight extends OpMode {
 
             double heading_error = -tx;
             double steering_adjust = 0.0;
+
+            /*
+
+            How you would implement this is
+
+            double input = headingError + min_command;
+
+            if (Math.abs(heading_error) > 1.0) {
+
+              steering adjust = controller.calculate(headingError, targetHeading);
+
+            }
+
+            or something in that sense
+
+
+             */
 
             if (Math.abs(heading_error) > 1.0) {
                 if (heading_error < 0) {

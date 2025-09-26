@@ -14,7 +14,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
-@TeleOp
+@TeleOp(name="Green Vision", group="Vision")
 public class blueVisionSS extends LinearOpMode {
 
     OpenCvCamera webcam;

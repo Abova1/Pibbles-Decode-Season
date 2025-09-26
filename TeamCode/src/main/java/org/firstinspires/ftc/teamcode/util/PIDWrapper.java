@@ -72,19 +72,18 @@ public class PIDWrapper {
 
     }
 
-    //for the limelight
-    public void TurretRun(double current, double target, double MAX, double MIN, double deadBand, double tolerance, DcMotorEx... motors){
+    //for the limelight if wanted clamps can be made for power
+    public void TurretRun(double current, double target, double MAX, double MIN, double minus, DcMotorEx... motors){
+
+
+        if(current >= MAX){
+            target = MIN - minus ;
+        }
+        else if(current <= MIN){
+            target = MAX - minus;
+        }
 
         double power = calc(current, target);
-        power = Globals.clamp(power, MAX, MIN);
-
-        if (Math.abs(current) < tolerance) {
-            power = 0;
-        }
-
-        if (Math.abs(power) < deadBand) {
-            power = 0;
-        }
 
         for(DcMotorEx motor : motors){
             motor.setPower(power);
