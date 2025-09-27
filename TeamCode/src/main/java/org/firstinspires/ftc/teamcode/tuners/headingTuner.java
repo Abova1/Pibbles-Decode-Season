@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.Globals;
 
 
 @Config
-@TeleOp
+@TeleOp(name="heading Tuner", group="tuners")
 public class headingTuner extends OpMode {
 
     private DcMotorEx motor;
@@ -28,6 +28,9 @@ public class headingTuner extends OpMode {
     public static double MIN = -1;
     private double previousHeading;
     private double heading;
+    private String direction = " ";
+    private String positive = "positive";
+    private String negative = "negative";
 
 
     @Override
@@ -37,13 +40,13 @@ public class headingTuner extends OpMode {
 
         controller = new PIDController(p, i, d);
         motor = hardwareMap.get(DcMotorEx.class, "motor0");
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         previousHeading = DataStorage.loadHeading();
-
+        heading = 0.5;
 
     }
 
@@ -74,10 +77,21 @@ public class headingTuner extends OpMode {
 
         double headingError = targetHeading - heading;
 
+        if(power < 0){
+            direction = negative;
+        } else if(power > 0){
+            direction = positive;
+        } else {
+            direction = "No Direction";
+        }
+
+
         telemetry.addData("Calculation", power);
+        telemetry.addData("Ticks", ticks);
         telemetry.addData("Power", motor.getPower());
         telemetry.addData("Heading", heading);
         telemetry.addData("Heading Error", headingError);
+        telemetry.addData("Direction", direction);
         telemetry.addData("Previous Heading", previousHeading);
         telemetry.update();
 

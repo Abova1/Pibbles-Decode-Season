@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.opModes.TeleOp;
 
-
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -13,11 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.Turret.LimeLightMotor;
 import org.firstinspires.ftc.teamcode.subsystems.Turret.Limelight;
 import org.firstinspires.ftc.teamcode.util.DataStorage;
-import org.firstinspires.ftc.teamcode.util.Globals;
 
 
-@Configurable
-@Config
 @TeleOp(name="Limelight + Turret test", group="Vision")
 public class visionTurretTest extends OpMode {
 
@@ -66,7 +60,8 @@ public class visionTurretTest extends OpMode {
 
         telemetry.addData("Motor power", turret.getPower());
         telemetry.addData("Heading", turret.getHeading());
-        telemetry.addData("Last Opmode Heading", previousHeading);
+        telemetry.addData("Last OpMode Heading", previousHeading);
+        telemetry.addData("Difference in Headings", limelight.getDiffHeading());
         telemetry.addData("Tx", result.getTx());
         telemetry.addData("Ty", result.getTy());
 

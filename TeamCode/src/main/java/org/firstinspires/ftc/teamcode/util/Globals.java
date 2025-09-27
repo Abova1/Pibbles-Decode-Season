@@ -64,8 +64,6 @@ public class Globals {
 
         }
 
-
-
     }
 
     public enum MOTOR_TICKS{
@@ -196,6 +194,7 @@ public class Globals {
         }
         return value;
     }
+
     public static double wrapTo(double value, double MAX, double MIN){
 
         double range = MAX - MIN;
@@ -225,6 +224,5 @@ public class Globals {
             public void end(boolean cancelled) {}
         };
     }
-
 
 }

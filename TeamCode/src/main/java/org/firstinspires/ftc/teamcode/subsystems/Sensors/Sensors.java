@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
 public class Sensors {
 
@@ -31,19 +32,26 @@ public class Sensors {
     }
 
     public void initIMU(){
-
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
 
         imu.initialize(parameters);
-
     }
 
-    public double getHeading(){
+    public double getIMUHeading(){
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
+
+    public double getPinPointHeading(){
+        return pinpoint.getHeading(UnnormalizedAngleUnit.DEGREES);
+    }
+
+    public void resetPinPoint(){
+        pinpoint.resetPosAndIMU();
+    }
+
 
     public void resetIMUYaw(){
         imu.resetYaw();

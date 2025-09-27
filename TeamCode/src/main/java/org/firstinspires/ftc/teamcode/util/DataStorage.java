@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import android.os.Environment;
-
 import java.io.*;
 
 public class DataStorage {
-
-
 
     private static final String FILENAME = "heading.txt";
 

@@ -21,7 +21,7 @@ public class LimeLightMotor {
 
     public LimeLightMotor(HardwareMap hardwareMap){
 
-        motor = hardwareMap.get(DcMotorEx.class, "LLmotor");
+        motor = hardwareMap.get(DcMotorEx.class, "Turret");
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

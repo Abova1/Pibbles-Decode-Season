@@ -75,7 +75,6 @@ public class PIDWrapper {
     //for the limelight if wanted clamps can be made for power
     public void TurretRun(double current, double target, double MAX, double MIN, double minus, DcMotorEx... motors){
 
-
         if(current >= MAX){
             target = MIN - minus ;
         }
