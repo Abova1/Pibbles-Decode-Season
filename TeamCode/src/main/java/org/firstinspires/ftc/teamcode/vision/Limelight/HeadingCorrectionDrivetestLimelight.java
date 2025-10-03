@@ -25,7 +25,7 @@ public class HeadingCorrectionDrivetestLimelight extends OpMode {
     pipeline 3 is motif
      */
 
-    public static double Kp = -0.1;
+    public static double Kp = -0.01;
 
     //theres also a PContoller for ftclib
     public PController controller;
@@ -54,8 +54,8 @@ public class HeadingCorrectionDrivetestLimelight extends OpMode {
         backRightMotor  = hardwareMap.dcMotor.get("backRightMotor");
 
 // Set motor directions
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
 
 
@@ -108,6 +108,7 @@ public class HeadingCorrectionDrivetestLimelight extends OpMode {
             telemetry.addData("Target X", tx);
         } else {
             telemetry.addData("Heading-Lock", "OFF");
+            telemetry.addData("Apriltag","Not seeing");
         }
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
