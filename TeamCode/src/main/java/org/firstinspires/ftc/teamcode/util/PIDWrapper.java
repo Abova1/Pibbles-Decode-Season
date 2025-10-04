@@ -39,6 +39,10 @@ public class PIDWrapper {
         return 0;
     }
 
+    public double diffcalc(double current, double target){
+        return PID.calculate(current, target);
+    }
+
     public void setPIDF(double p, double i, double d, double f){
         PIDF.setPIDF(p, i, d, f);
     }
@@ -82,7 +86,7 @@ public class PIDWrapper {
             target = MAX - minus;
         }
 
-        double power = calc(current, target);
+        double power = diffcalc(current, target);
 
         for(DcMotorEx motor : motors){
             motor.setPower(power);

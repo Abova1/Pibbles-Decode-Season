@@ -30,7 +30,7 @@ public class mainTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            DT.Drive(-Driver.getLy(), Driver.getLx() * 1.1, Driver.getRx());
+            DT.RCDrive(-Driver.getLy(), Driver.getLx() * 1.1, Driver.getRx());
 
         }
 

@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.Globals;
 
 
 @Config
-@TeleOp(name="heading Tuner", group="tuners")
+@TeleOp(name="Heading Tuner", group="tuners")
 public class headingTuner extends OpMode {
 
     private DcMotorEx motor;

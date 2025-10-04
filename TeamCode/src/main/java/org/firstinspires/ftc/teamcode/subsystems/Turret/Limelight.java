@@ -10,12 +10,13 @@ import org.firstinspires.ftc.teamcode.util.Globals;
 
 public class Limelight {
 
-    private LimeLightMotor turret;
+    private Turret turret;
     private Limelight3A limelight;
     private LLResult results;
     private LLStatus status;
     private Sensors sensors;
 
+    private int index;
     private double previousTx;
     private double currentTx;
     private double previousTy;
@@ -26,7 +27,7 @@ public class Limelight {
 
     public Limelight(HardwareMap hardwareMap){
 
-        turret = new LimeLightMotor(hardwareMap);
+        turret = new Turret(hardwareMap);
         limelight = hardwareMap.get(Limelight3A.class, "Limelight");
         sensors = new Sensors(hardwareMap);
 
@@ -49,53 +50,46 @@ public class Limelight {
 
     public void run(){
 
-        double RobotHeading = sensors.getIMUHeading();
-        double TurretHeading = turret.getHeading();
-
-        DiffHeading = TurretHeading - RobotHeading;
-
-        /*
-        Depending on where we start we know the set position of the turret if the limelight drifts
-        for now its 135 degrees
-         */
-
-
         results = limelight.getLatestResult();
         status = limelight.getStatus();
 
-        if(results != null && results.isValid()){
+        if(index != 3){
 
-            currentTx = results.getTx();
-            currentTy = results.getTy();
+            if(results != null && results.isValid()){
 
-            double txError = targetTx + currentTx;
+                currentTx = results.getTx();
+                currentTy = results.getTy();
 
-            LimeLightMotor.targetHeading = txError + turret.getHeading();
+                double txError = targetTx + currentTx;
 
-            turret.run();
+                turret.setTargetHeading(turret.getMEHeading() + txError);
+
+                turret.run();
+
+            }
+            else {
+
+                if(previousTx > 0){
+                    turret.setPower(-0.2);
+                }
+                else if (previousTx < 0) {
+                    turret.setPower(0.2);
+                } else {
+                    turret.setPower(0.2);
+                }
+
+            }
+
+            previousTx = currentTx;
+            previousTy = currentTy;
 
         }
-        else {
-
-            if(previousTx > 0){
-                turret.setPower(-0.2);
-            }
-            else if (previousTx < 0) {
-                turret.setPower(0.2);
-            } else {
-                turret.setPower(0.2);
-            }
-
-        }
-
-        previousTx = currentTx;
-        previousTy = currentTy;
 
     }
 
     public void pipeline(Globals.pipelines pipelines){
 
-        int index = pipelines.index;
+        index = pipelines.index;
 
         limelight.pipelineSwitch(index);
 
