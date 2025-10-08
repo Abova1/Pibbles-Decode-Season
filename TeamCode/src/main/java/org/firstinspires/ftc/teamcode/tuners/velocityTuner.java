@@ -76,10 +76,10 @@ public class velocityTuner extends OpMode {
     public void loop () {
 
         if(aBoolean){
-
+            //There were no further instructions so this is it ig?
             double ff = feedforward.calculate(targetV, targetA);
 
-            motor1.setVelocity(ff);
+            motor1.setPower(ff);
 
             telemetry.addData("calculation", ff);
             telemetry.addData("Velocity", motor1.getVelocity());
@@ -89,18 +89,29 @@ public class velocityTuner extends OpMode {
 
             controller.setPID(kP, kI, kD);
 
+            /*
+            Using ticks to calculate an actual velocity since
+            .getVelocity likes to go up by 20 ticks/sec which is inconsistent
+            when dealing with the PID controller
+             */
             long currentTime = System.nanoTime();
             double deltaTime = (currentTime - lastUpdateTime) / 1e9;
             int currentTicks = motor1.getCurrentPosition();
             int deltaTicks = currentTicks - previousTicks;
 
             double velocityTicksPerSecond = deltaTicks / deltaTime;
+            //This is a form of the formula for exponential moving average which smooths the values given
             velocity = (int) (alpha * velocityTicksPerSecond + (1 - alpha) * velocity);
 
             previousTicks = currentTicks;
             lastUpdateTime = currentTime;
 
             double PID = controller.calculate(velocity, target);
+
+            /*
+            the reason why it's target PLUS PID is because it has to be a constant value
+            and when it fluctuates the PID controller adds more of a target
+             */
             double finalOutput = Globals.clamp(target + PID, MAX_VELOCITY, MIN_VELOCITY);
 
             double velocityError = target - velocity;
