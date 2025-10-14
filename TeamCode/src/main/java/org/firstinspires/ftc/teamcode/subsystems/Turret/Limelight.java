@@ -5,26 +5,31 @@ import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.Globals;
 
 public class Limelight {
 
-    private LimeLightMotor turret;
+    private Turret turret;
     private Limelight3A limelight;
     private LLResult results;
     private LLStatus status;
+    private Sensors sensors;
 
+    private int index;
     private double previousTx;
     private double currentTx;
     private double previousTy;
     private double currentTy;
     private final double targetTx = 0;
+    double DiffHeading;
 
 
     public Limelight(HardwareMap hardwareMap){
 
-        turret = new LimeLightMotor(hardwareMap);
+        turret = new Turret(hardwareMap);
         limelight = hardwareMap.get(Limelight3A.class, "Limelight");
+        sensors = new Sensors(hardwareMap);
 
         previousTx = 0;
         currentTx = 0;
@@ -36,51 +41,55 @@ public class Limelight {
 
     public void initiate(){
 
+        sensors.initIMU();
         limelight.start();
         limelight.setPollRateHz(200); // 200 updates/sec
         pipeline(Globals.pipelines.Red);//Red Goal
 
     }
 
-
     public void run(){
 
         results = limelight.getLatestResult();
         status = limelight.getStatus();
 
-        if(results != null && results.isValid()){
+        if(index != 3){
 
-            currentTx = results.getTx();
-            currentTy = results.getTy();
+            if(results != null && results.isValid()){
 
-            double txError = targetTx + currentTx;
+                currentTx = results.getTx();
+                currentTy = results.getTy();
 
-            LimeLightMotor.targetHeading = txError + turret.getHeading();
+                double txError = targetTx + currentTx;
 
-            turret.run();
+                turret.setTargetHeading(turret.getMEHeading() + txError);
+
+                turret.run();
+
+            }
+            else {
+
+                if(previousTx > 0){
+                    turret.setPower(-0.2);
+                }
+                else if (previousTx < 0) {
+                    turret.setPower(0.2);
+                } else {
+                    turret.setPower(0.2);
+                }
+
+            }
+
+            previousTx = currentTx;
+            previousTy = currentTy;
 
         }
-        else {
-
-            if(previousTx > 0){
-                turret.setPower(-0.2);
-            }
-            else if (previousTx < 0) {
-                turret.setPower(0.2);
-            } else {
-                turret.setPower(0.2);
-            }
-
-        }
-
-        previousTx = currentTx;
-        previousTy = currentTy;
 
     }
 
     public void pipeline(Globals.pipelines pipelines){
 
-        int index = pipelines.index;
+        index = pipelines.index;
 
         limelight.pipelineSwitch(index);
 
@@ -92,6 +101,10 @@ public class Limelight {
 
     public LLResult getLatestResults(){
         return limelight.getLatestResult();
+    }
+
+    public double getDiffHeading(){
+        return DiffHeading;
     }
 
 }

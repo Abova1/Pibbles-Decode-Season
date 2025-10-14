@@ -1,55 +1,54 @@
 package org.firstinspires.ftc.teamcode.opModes.TeleOp;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooters;
-import org.firstinspires.ftc.teamcode.subsystems.Turret.Limelight;
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensors;
+import org.firstinspires.ftc.teamcode.subsystems.Turret.Turret;
 import org.firstinspires.ftc.teamcode.util.Command.CommandScheduler;
 import org.firstinspires.ftc.teamcode.util.Controller;
-import org.firstinspires.ftc.teamcode.util.Globals;
 import org.firstinspires.ftc.teamcode.util.TeleHandler;
 
 @TeleOp (name="Test OpMode", group="OpModes")
 public class testingValues extends LinearOpMode {
 
     private Controller Driver, Operator;
-    private Limelight limelight;
-    private Shooters shooter;
+    private Turret turret;
     private TeleHandler teleHandler;
     private CommandScheduler scheduler;
-    private VoltageSensor vs;
+    private Sensors sensors;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         scheduler = new CommandScheduler();
-
         scheduler.clear();
 
         Driver = new Controller(gamepad1, scheduler);
+        turret = new Turret(hardwareMap);
 
-        shooter = new Shooters(hardwareMap);
+        teleHandler = new TeleHandler(Driver, scheduler, turret);
 
-        teleHandler = new TeleHandler(Driver, scheduler, shooter);
+        sensors = new Sensors(hardwareMap);
 
-        vs = hardwareMap.get(VoltageSensor.class, "Control Hub");
-
-        telemetry.setMsTransmissionInterval(175);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         waitForStart();
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
 
-            scheduler.run();
             teleHandler.TeleOp();
 
             telemetry.addData("Current State", teleHandler.getState());
             telemetry.addData("Command Scheduled", scheduler.currentCommandScheduled());
-            telemetry.addData("Voltage", vs.getVoltage());
-            telemetry.addData("Shooter Velocity", shooter.getVelo());
+            telemetry.addData("Voltage", sensors.getVoltage());
+            telemetry.addData("Turret Heading",turret.getMEHeading());
+            telemetry.addData("Robot Heading", sensors.getIMUHeading(false));
+
             telemetry.update();
 
         }

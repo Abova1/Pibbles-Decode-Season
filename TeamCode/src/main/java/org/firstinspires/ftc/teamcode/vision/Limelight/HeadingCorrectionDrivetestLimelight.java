@@ -19,14 +19,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp(name="Configurable AprilTag Limelight", group="Vision")
 public class HeadingCorrectionDrivetestLimelight extends OpMode {
 
-    // TODO: 9/20/2025 this seems wrong for some reason check out field centric code to see how to manipulate heading better
-
     /*
      pipeline 1 is red goal
     pipeline 2 is blue goal
     pipeline 3 is motif
      */
-    public static double Kp = -0.1;
+
+    public static double Kp = -0.01;
 
     //theres also a PContoller for ftclib
     public PController controller;
@@ -55,8 +54,8 @@ public class HeadingCorrectionDrivetestLimelight extends OpMode {
         backRightMotor  = hardwareMap.dcMotor.get("backRightMotor");
 
 // Set motor directions
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
 
 
@@ -94,23 +93,6 @@ public class HeadingCorrectionDrivetestLimelight extends OpMode {
             double heading_error = -tx;
             double steering_adjust = 0.0;
 
-            /*
-
-            How you would implement this is
-
-            double input = headingError + min_command;
-
-            if (Math.abs(heading_error) > 1.0) {
-
-              steering adjust = controller.calculate(headingError, targetHeading);
-
-            }
-
-            or something in that sense
-
-
-             */
-
             if (Math.abs(heading_error) > 1.0) {
                 if (heading_error < 0) {
                     steering_adjust = Kp * heading_error + min_command;
@@ -126,6 +108,7 @@ public class HeadingCorrectionDrivetestLimelight extends OpMode {
             telemetry.addData("Target X", tx);
         } else {
             telemetry.addData("Heading-Lock", "OFF");
+            telemetry.addData("Apriltag","Not seeing");
         }
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);

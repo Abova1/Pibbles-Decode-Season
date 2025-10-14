@@ -18,7 +18,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp(name="Distance + Heading AprilTag Limelight", group="Vision")
 public class DistanceandHeadingcorrectionDrivetestLimelight extends OpMode {
 
-    // TODO: 9/20/2025 this seems wrong for some reason check out field centric code to see how to manipulate heading better
 
     /*
      pipeline 1 is red goal
