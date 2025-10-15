@@ -66,6 +66,25 @@ public class Globals {
 
     }
 
+    public enum Patterns{
+        GPP,
+        PGP,
+        PPG
+    }
+
+    public enum Colors {
+
+        Purple(1),
+        Green(2);
+
+        public int index;
+
+        Colors(int index){
+            this.index = index;
+        }
+
+    }
+
     public enum MOTOR_TICKS{
 
         RPM_6000(28),

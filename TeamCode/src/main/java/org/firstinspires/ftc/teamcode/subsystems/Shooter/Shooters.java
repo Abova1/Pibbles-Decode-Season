@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems.shooter;
+package org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,8 +21,10 @@ public class Shooters {
 
     public Shooters(HardwareMap hardwareMap){
 
-        motor1 = hardwareMap.get(DcMotorEx.class, "motor0");
+        motor1 = hardwareMap.get(DcMotorEx.class, "LShooter");
+        motor2 = hardwareMap.get(DcMotorEx.class, "RShooter");
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         reset();
 
     }
@@ -30,6 +32,8 @@ public class Shooters {
 
         motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         previousTicks = motor1.getCurrentPosition();
         lastUpdateTime = System.nanoTime();
 
@@ -60,7 +64,7 @@ public class Shooters {
         double velo = getVelo();
 
         veloPID.setPID(Values.p, Values.i, Values.d);
-        veloPID.VelocityRun(velo, target, Values.MAX_VELOCITY, Values.MIN_VELOCITY, motor1);
+        veloPID.VelocityRun(velo, target, Values.MAX_VELOCITY, Values.MIN_VELOCITY, motor1, motor2);
 
     }
 

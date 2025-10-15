@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.opModes.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.subsystems.driveTrain.DT;
+import org.firstinspires.ftc.teamcode.subsystems.Gobuilda.Intake.GobuildaIntake;
+import org.firstinspires.ftc.teamcode.subsystems.DT;
 import org.firstinspires.ftc.teamcode.util.*;
 import org.firstinspires.ftc.teamcode.util.Command.CommandScheduler;
 
@@ -12,17 +12,25 @@ import org.firstinspires.ftc.teamcode.util.Command.CommandScheduler;
 public class mainTeleOp extends LinearOpMode {
 
     private DT DT;
-    private VoltageSensor vs;
+    private GobuildaIntake intake;
+    private TeleHandler teleHandler;
     private Controller Driver, Operator;
-
     private CommandScheduler scheduler;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        vs = hardwareMap.get(VoltageSensor.class, "Control Hub");
+        scheduler = new CommandScheduler();
+        scheduler.clear();
+
+        Driver = new Controller(gamepad1, scheduler);
+
         DT = new DT(hardwareMap);
+
+
+        teleHandler = new TeleHandler(Driver, scheduler, intake);
+
 
         waitForStart();
 
@@ -30,7 +38,11 @@ public class mainTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            DT.RCDrive(-Driver.getLy(), Driver.getLx() * 1.1, Driver.getRx());
+            teleHandler.TeleOp();
+
+            DT.RCDrive(-(Driver.getLy()), Driver.getLx() * 1.1, Driver.getRx());
+
+            telemetry.update();
 
         }
 
