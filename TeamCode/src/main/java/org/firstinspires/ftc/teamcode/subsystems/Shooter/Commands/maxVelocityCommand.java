@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.subsystems.shooter.Commands;
+package org.firstinspires.ftc.teamcode.subsystems.Shooter.Commands;
 
 import androidx.annotation.NonNull;
 
-import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooters;
+import org.firstinspires.ftc.teamcode.subsystems.Shooter.Shooters;
 import org.firstinspires.ftc.teamcode.util.Command.Command;
 
 public class maxVelocityCommand implements Command {

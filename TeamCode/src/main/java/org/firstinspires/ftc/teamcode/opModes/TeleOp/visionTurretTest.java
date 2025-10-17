@@ -7,8 +7,8 @@ import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.Turret.Turret;
-import org.firstinspires.ftc.teamcode.subsystems.Turret.Limelight;
+import org.firstinspires.ftc.teamcode.subsystems.Custom.Turret.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.Custom.Limelight;
 import org.firstinspires.ftc.teamcode.util.DataStorage;
 
 
