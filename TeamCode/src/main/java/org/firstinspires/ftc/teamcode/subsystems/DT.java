@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.subsystems.driveTrain;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.acmerobotics.roadrunner.Pose2d;
 
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensors;
 
@@ -24,8 +23,8 @@ public class DT {
         FR = hardwareMap.get(DcMotorEx.class, "FR");
         BR = hardwareMap.get(DcMotorEx.class, "BR");
 
-        FR.setDirection(DcMotorSimple.Direction.REVERSE);
-        BR.setDirection(DcMotorSimple.Direction.REVERSE);
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
     }
 
