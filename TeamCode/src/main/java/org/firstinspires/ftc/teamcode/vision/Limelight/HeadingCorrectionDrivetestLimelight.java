@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Configurable
 @Config
-@TeleOp(name="Configurable AprilTag Limelight", group="Vision")
+@TeleOp(name="Heading Limelight", group="Vision")
 public class HeadingCorrectionDrivetestLimelight extends OpMode {
 
     /*

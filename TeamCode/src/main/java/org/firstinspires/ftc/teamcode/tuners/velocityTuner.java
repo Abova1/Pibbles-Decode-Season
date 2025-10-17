@@ -43,7 +43,7 @@ public class velocityTuner extends OpMode {
     private int previousTicks;
     private long lastUpdateTime;
 
-    public static double alpha = 0;
+    public static double Alpha = 0;
     private int velocity = 0;
 
 //    public static boolean aBoolean = false;
@@ -62,7 +62,7 @@ public class velocityTuner extends OpMode {
 
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
-        motor1 = hardwareMap.get(DcMotorEx.class, "Intake");
+        motor1 = hardwareMap.get(DcMotorEx.class, "motor0");
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -89,18 +89,17 @@ public class velocityTuner extends OpMode {
 
         double velocityTicksPerSecond = deltaTicks / deltaTime;
         //This is a form of the formula for exponential moving average which smooths the values given
-        velocity = (int) (alpha * velocityTicksPerSecond + (1 - alpha) * velocity);
+        velocity = (int) (Alpha * velocityTicksPerSecond + (1 - Alpha) * velocity);
 
         previousTicks = currentTicks;
         lastUpdateTime = currentTime;
 
-        double PID = controller.calculate(velocity, target);
-
+        double PIDF = controller.calculate(velocity, target) + (F * target);
         /*
         the reason why it's target PLUS PID is because it has to be a constant value
         and when it fluctuates the PID controller adds more of a target
         */
-        double finalOutput = Globals.clamp(target + PID, MAX_VELOCITY, MIN_VELOCITY);
+        double finalOutput = Globals.clamp(target + PIDF , MAX_VELOCITY, MIN_VELOCITY);
 
         double velocityError = target - velocity;
       
@@ -110,7 +109,7 @@ public class velocityTuner extends OpMode {
         telemetry.addData("Velocity: ", velocity);
         telemetry.addData("Target: ", target);
         telemetry.addData("Output", finalOutput);
-        telemetry.addData("Controller Calculation", PID);
+        telemetry.addData("Controller Calculation", PIDF);
         telemetry.addData("Error: ", velocityError);
 
         telemetry.addData("Motor Current in AMPS", motor1.getCurrent(CurrentUnit.AMPS));

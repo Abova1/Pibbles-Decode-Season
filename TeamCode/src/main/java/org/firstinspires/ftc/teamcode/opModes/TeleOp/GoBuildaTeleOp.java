@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.subsystems.DT;
 import org.firstinspires.ftc.teamcode.util.*;
 import org.firstinspires.ftc.teamcode.util.Command.CommandScheduler;
 
-@TeleOp (name="Main TeleOp", group="OpModes")
-public class mainTeleOp extends LinearOpMode {
+@TeleOp (name="GoBuilda TeleOp", group="OpModes")
+public class GoBuildaTeleOp extends LinearOpMode {
 
     private DT DT;
     private GobuildaIntake intake;

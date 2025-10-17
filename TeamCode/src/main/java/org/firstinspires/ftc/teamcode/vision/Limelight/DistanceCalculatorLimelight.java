@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @Configurable
 @Config
-@TeleOp(name="Configurable AprilTag Limelight", group="Vision")
+@TeleOp(name="Distance Calc Limelight", group="Vision")
 public class DistanceCalculatorLimelight extends OpMode {
 
     /*
