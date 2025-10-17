@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-    .mass(9.768007);
+    .mass(8.3461);
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
 
