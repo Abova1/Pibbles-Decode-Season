@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.util.Globals;
 
 @Config
@@ -26,7 +27,7 @@ public class velocityTuner extends OpMode {
     P = 0.7
     I = 1
     D = 0.00685
-    alpha = 0.09
+    alpha = 0.02
      */
 
     public PIDController controller;
@@ -38,7 +39,7 @@ public class velocityTuner extends OpMode {
     public static double kP = 0, kD = 0, kI = 0, F = 0;
 
     public static double target = 0;
-    private final double MAX_VELOCITY = 3100;
+    private final double MAX_VELOCITY = 3500;
     private final double MIN_VELOCITY = 0;
     private int previousTicks;
     private long lastUpdateTime;
@@ -94,14 +95,19 @@ public class velocityTuner extends OpMode {
         previousTicks = currentTicks;
         lastUpdateTime = currentTime;
 
-        double PIDF = controller.calculate(velocity, target) + (F * target);
+        double velocityError = target - velocity;
+
+        double PID = controller.calculate(velocity, target);
+
         /*
         the reason why it's target PLUS PID is because it has to be a constant value
         and when it fluctuates the PID controller adds more of a target
         */
-        double finalOutput = Globals.clamp(target + PIDF , MAX_VELOCITY, MIN_VELOCITY);
+        double finalOutput = Globals.clamp(target + PID , MAX_VELOCITY, MIN_VELOCITY);
 
-        double velocityError = target - velocity;
+        if(velocityError > 50){
+            finalOutput += (F * target);
+        }
       
         motor1.setVelocity(finalOutput);
 
@@ -109,7 +115,7 @@ public class velocityTuner extends OpMode {
         telemetry.addData("Velocity: ", velocity);
         telemetry.addData("Target: ", target);
         telemetry.addData("Output", finalOutput);
-        telemetry.addData("Controller Calculation", PIDF);
+        telemetry.addData("Controller Calculation", PID);
         telemetry.addData("Error: ", velocityError);
 
         telemetry.addData("Motor Current in AMPS", motor1.getCurrent(CurrentUnit.AMPS));

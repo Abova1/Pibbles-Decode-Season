@@ -21,10 +21,8 @@ public class Shooters {
 
     public Shooters(HardwareMap hardwareMap){
 
-        motor1 = hardwareMap.get(DcMotorEx.class, "LShooter");
-        motor2 = hardwareMap.get(DcMotorEx.class, "RShooter");
+        motor1 = hardwareMap.get(DcMotorEx.class, "Shooter");
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         reset();
 
     }
@@ -32,8 +30,6 @@ public class Shooters {
 
         motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         previousTicks = motor1.getCurrentPosition();
         lastUpdateTime = System.nanoTime();
 
@@ -64,7 +60,9 @@ public class Shooters {
         double velo = getVelo();
 
         veloPID.setPID(Values.p, Values.i, Values.d);
-        veloPID.VelocityRun(velo, target, Values.MAX_VELOCITY, Values.MIN_VELOCITY, motor1, motor2);
+        veloPID.setF(Values.f);
+        veloPID.setVeloThresh(Values.VeloErrorThresh);
+        veloPID.VelocityRun(velo, target, Values.MAX_VELOCITY, Values.MIN_VELOCITY, motor1);
 
     }
 

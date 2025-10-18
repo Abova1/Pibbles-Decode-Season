@@ -11,6 +11,8 @@ public class PIDWrapper {
     private PIDFController PIDF;
     private PIDController PID;
     private PDController PD;
+    private double F;
+    private double Thresh;
 
 
     public PIDWrapper(PIDFController pidf){
@@ -54,6 +56,13 @@ public class PIDWrapper {
         PD.setP(p);
         PD.setD(d);
     }
+    public void setF(double f){
+        F = f;
+    }
+
+    public void setVeloThresh(double thresh){
+        Thresh = thresh;
+    }
 
     public void PositionRun(double current, double target, DcMotorEx... motors){
 
@@ -69,6 +78,10 @@ public class PIDWrapper {
 
         double pid = calc(current, target);
         double finalOutput = Globals.clamp(target + pid, MAX, MIN);
+
+        if((target - current) > Thresh){
+            finalOutput += F * target;
+        }
 
         for (DcMotorEx motor : motors) {
             motor.setVelocity(finalOutput);
