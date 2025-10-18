@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -34,12 +35,14 @@ public class velocityTuner extends OpMode {
     public SimpleMotorFeedforward feedforward;
     public VoltageSensor voltageSensor;
     public DcMotorEx motor1;
+    public Servo hood;
 
 //    public static double kS = 0, kV= 0, kA = 0;
     public static double kP = 0, kD = 0, kI = 0, F = 0;
 
     public static double target = 0;
-    private final double MAX_VELOCITY = 3500;
+    public static double ServoPos = 0;
+    private final double MAX_VELOCITY = 10000;
     private final double MIN_VELOCITY = 0;
     private int previousTicks;
     private long lastUpdateTime;
@@ -63,7 +66,9 @@ public class velocityTuner extends OpMode {
 
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
-        motor1 = hardwareMap.get(DcMotorEx.class, "motor0");
+        hood = hardwareMap.get(Servo.class, "hood");
+
+        motor1 = hardwareMap.get(DcMotorEx.class, "shooter");
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -108,6 +113,9 @@ public class velocityTuner extends OpMode {
         if(velocityError > 50){
             finalOutput += (F * target);
         }
+
+        //0.1 is down 0.55 is up
+        hood.setPosition(ServoPos);
       
         motor1.setVelocity(finalOutput);
 

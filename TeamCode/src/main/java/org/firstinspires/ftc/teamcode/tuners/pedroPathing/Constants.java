@@ -34,11 +34,7 @@ public class Constants {
         FollowerBuilder followerBuilder = new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants);
-
-
         followerBuilder.build();
-
-
 
         PinpointConstants localizerConstants = new PinpointConstants()
                 .forwardPodY(-5)
@@ -53,9 +49,5 @@ public class Constants {
                 .pinpointLocalizer(localizerConstants)
                 /* other builder steps */
                 .build();
-
-
-
-
     }
 }

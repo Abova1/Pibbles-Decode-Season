@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,9 +21,10 @@ public class headingTuner extends OpMode {
 
     private DcMotorEx motor;
     private PIDController controller;
+    private Limelight3A limelight;
     public static double p = 0, i = 0, d = 0;
 
-    public static double ticksPerRev = 103.8; // the more TPR the more accurate
+    public static double ticksPerRev = 407.785714286;
     public static double targetHeading = 0;
     public static double MAX = 1;
     public static double MIN = -1;
@@ -39,14 +41,13 @@ public class headingTuner extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         controller = new PIDController(p, i, d);
-        motor = hardwareMap.get(DcMotorEx.class, "motor0");
+        motor = hardwareMap.get(DcMotorEx.class, "turret");
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         previousHeading = DataStorage.loadHeading();
-        heading = 0.5;
 
     }
 
@@ -58,22 +59,21 @@ public class headingTuner extends OpMode {
         double ticks = motor.getCurrentPosition();
         double degrees = (ticks / ticksPerRev) * 360;
 
-        heading = (((degrees % 360) + 360) % 360);
+        heading = ((degrees % 360));
 
 
-        if(heading > 359){
-            targetHeading = 1;
-        }
-        else if(heading <= 0.5){
-            targetHeading = 358;
-        }
-
+//        if(heading > 359){
+//            targetHeading = 1;
+//        }
+//        else if(heading <= 0.5){
+//            targetHeading = 358;
+//        }
 
         double power = controller.calculate(heading, targetHeading);
 
-        power = Globals.clamp(power, MAX, MIN);
+//        power = Globals.clamp(power, MAX, MIN);
 
-        motor.setPower(power);
+        motor.setPower(-power);
 
         double headingError = targetHeading - heading;
 

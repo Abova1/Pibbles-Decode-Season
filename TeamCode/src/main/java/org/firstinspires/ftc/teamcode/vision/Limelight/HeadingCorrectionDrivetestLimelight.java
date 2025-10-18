@@ -48,10 +48,10 @@ public class HeadingCorrectionDrivetestLimelight extends OpMode {
 
 
         limelight = hardwareMap.get(Limelight3A.class, "Limelight");
-        frontLeftMotor  = hardwareMap.dcMotor.get("frontLeftMotor");
-        backLeftMotor   = hardwareMap.dcMotor.get("backLeftMotor");
-        frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
-        backRightMotor  = hardwareMap.dcMotor.get("backRightMotor");
+        frontLeftMotor  = hardwareMap.dcMotor.get("FR");
+        backLeftMotor   = hardwareMap.dcMotor.get("BL");
+        frontRightMotor = hardwareMap.dcMotor.get("FR");
+        backRightMotor  = hardwareMap.dcMotor.get("BR");
 
 // Set motor directions
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);

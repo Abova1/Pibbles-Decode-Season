@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.util.PIDWrapper;
 
 public class Shooters {
 
-    private DcMotorEx motor1, motor2;
+    private DcMotorEx motor1;
     private PIDWrapper veloPID = new PIDWrapper(new PIDController(Values.p, Values.i, Values.d));
 
     private double previousTicks;
@@ -21,7 +21,7 @@ public class Shooters {
 
     public Shooters(HardwareMap hardwareMap){
 
-        motor1 = hardwareMap.get(DcMotorEx.class, "Shooter");
+        motor1 = hardwareMap.get(DcMotorEx.class, "shooter");
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         reset();
 

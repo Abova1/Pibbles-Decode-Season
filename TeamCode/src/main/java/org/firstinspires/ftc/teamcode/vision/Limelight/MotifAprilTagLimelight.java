@@ -23,8 +23,6 @@ public class MotifAprilTagLimelight extends OpMode {
     @Override
     public void init() {
         limelight = hardwareMap.get(Limelight3A.class, "Limelight");
-
-
     }
 
     @Override
