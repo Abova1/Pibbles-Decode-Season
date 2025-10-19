@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.DataStorage;
 import org.firstinspires.ftc.teamcode.util.Globals;
 
@@ -19,9 +22,14 @@ import org.firstinspires.ftc.teamcode.util.Globals;
 @TeleOp(name="Heading Tuner", group="tuners")
 public class headingTuner extends OpMode {
 
+    //myles poopy head2
+
     private DcMotorEx motor;
     private PIDController controller;
     private Limelight3A limelight;
+
+    private Sensors sensors;
+
     public static double p = 0, i = 0, d = 0;
 
     public static double ticksPerRev = 407.785714286;
@@ -33,6 +41,9 @@ public class headingTuner extends OpMode {
     private String direction = " ";
     private String positive = "positive";
     private String negative = "negative";
+
+    public static double kTx = 0.5; // how aggressively tx affects targetHeading
+
 
 
     @Override
@@ -47,12 +58,36 @@ public class headingTuner extends OpMode {
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        sensors = new Sensors(hardwareMap);
+        sensors.initIMU();
+
+        limelight = hardwareMap.get(Limelight3A.class, "Limelight");
+
         previousHeading = DataStorage.loadHeading();
 
     }
 
     @Override
+    public void start(){
+        limelight.start();
+        limelight.pipelineSwitch(1);
+        limelight.setPollRateHz(150);
+    }
+
+
+    @Override
     public void loop() {
+
+        LLStatus status = limelight.getStatus();
+
+        telemetry.addData("Name", "%s",
+                status.getName());
+        telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
+                status.getTemp(), status.getCpu(), (int) status.getFps());
+        telemetry.addData("Pipeline", "Index: %d, Type: %s",
+                status.getPipelineIndex(), status.getPipelineType());
+
+        LLResult result = limelight.getLatestResult();
 
         controller.setPID(p, i, d);
 
@@ -85,6 +120,19 @@ public class headingTuner extends OpMode {
             direction = "No Direction";
         }
 
+        if (result != null && result.isValid()) {
+            double tx = result.getTx(); // How far left or right the target is (degrees)
+            double ty = result.getTy(); // How far up or down the target is (degrees)
+
+            telemetry.addData("Target X", tx);
+            telemetry.addData("Target Y", ty);
+
+            targetHeading -= kTx * tx;
+
+
+        } else {
+
+        }
 
         telemetry.addData("Calculation", power);
         telemetry.addData("Ticks", ticks);
