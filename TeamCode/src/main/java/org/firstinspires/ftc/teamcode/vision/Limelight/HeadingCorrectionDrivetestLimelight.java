@@ -27,7 +27,7 @@ public class HeadingCorrectionDrivetestLimelight extends OpMode {
 
     public static double Kp = -0.01;
 
-    //theres also a PContoller for ftclib
+    //theres also a PController for ftclib
     public PController controller;
 
 

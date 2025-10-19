@@ -28,10 +28,10 @@ public class DistanceCalculatorLimelight extends OpMode {
     private Limelight3A limelight;
 
     // how many degrees back is your limelight rotated from perfectly vertical?
-    double limelightMountAngleDegrees = 25.0;
+    double limelightMountAngleDegrees = 10.0;
 
     // distance from the center of the Limelight lens to the floor
-    double limelightLensHeightInches = 20.0;
+    double limelightLensHeightInches = 13.50173228;
 
     // distance from the target to the floor in inches
     double goalHeightInches = 29.5; //29.5" from floor to apriltag
@@ -88,7 +88,7 @@ public class DistanceCalculatorLimelight extends OpMode {
 
             //calculate distance
             double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
-
+            telemetry.addData("Distance", distanceFromLimelightToGoalInches);
         } else {
             telemetry.addData("Limelight", "No Targets");
         }

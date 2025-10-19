@@ -101,14 +101,23 @@ public class headingTuner extends OpMode {
         double degrees = (ticks / ticksPerRev) * 360;
 
         heading = ((degrees % 360));
+        //min is -250 max is 135
 
 
-        if(heading >= 134){
-            targetHeading = -215;
+// Safety thresholds
+        double upperThreshold = 122.5;
+        double lowerThreshold = -237.5;
+
+        double headingError = targetHeading - heading;
+
+        if (heading > upperThreshold && headingError > 0) {
+            // About to go past upper limit, unwrap clockwise
+            targetHeading -= 360;
+        } else if (heading < lowerThreshold && headingError < 0) {
+            // About to go past lower limit, unwrap counter-clockwise
+            targetHeading += 360;
         }
-        else if(heading <= -224){
-            targetHeading = 130;
-        }
+
 
         double power = controller.calculate(heading, targetHeading);
 
@@ -116,7 +125,7 @@ public class headingTuner extends OpMode {
 
         motor.setPower(-power);
 
-        double headingError = targetHeading - heading;
+
 
         if(power < 0){
             direction = negative;
