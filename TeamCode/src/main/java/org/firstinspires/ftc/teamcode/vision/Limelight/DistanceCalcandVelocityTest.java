@@ -39,6 +39,8 @@ public class DistanceCalcandVelocityTest extends OpMode {
     public SimpleMotorFeedforward feedforward;
     public VoltageSensor voltageSensor;
     public DcMotorEx motor1;
+
+    public double ServoPosCalculation;
     public Servo hood;
 
     private Limelight3A limelight;
@@ -53,7 +55,7 @@ public class DistanceCalcandVelocityTest extends OpMode {
     double goalHeightInches = 29.5; //29.5" from floor to apriltag
 
     //    public static double kS = 0, kV= 0, kA = 0;
-    public static double kP = 0, kD = 0, kI = 0, F = 0;
+    public static double kP = 0.001, kD = 0.002, kI = 0, F = 0.001;
 
     public static double target = 0;
     public static double ServoPos = 0;
@@ -62,7 +64,9 @@ public class DistanceCalcandVelocityTest extends OpMode {
     private int previousTicks;
     private long lastUpdateTime;
 
-    public static double Alpha = 0;
+    public double distanceFromLimelightToGoalInches;
+
+    public static double Alpha = 0.3;
     private int velocity = 0;
 
 //    public static boolean aBoolean = false;
@@ -131,7 +135,7 @@ public class DistanceCalcandVelocityTest extends OpMode {
             double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
             //calculate distance
-            double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
+            distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
             telemetry.addData("Distance", distanceFromLimelightToGoalInches);
         } else {
             telemetry.addData("Limelight", "No Targets");
@@ -171,11 +175,16 @@ public class DistanceCalcandVelocityTest extends OpMode {
         }
 
         //0.1 is down 0.55 is up
-        hood.setPosition(ServoPos);
+        ServoPosCalculation = ((-0.00391524) * (distanceFromLimelightToGoalInches)) + 0.696695;
+
+        ServoPosCalculation = Globals.clamp(ServoPosCalculation, 0.55, 0.1);
+
+        hood.setPosition(ServoPosCalculation);
 
         motor1.setVelocity(finalOutput);
 
         telemetry.addData("SDK Motor Velocity: ", motor1.getVelocity());
+        telemetry.addData("ServoPosCalculator", ServoPosCalculation);
         telemetry.addData("Velocity: ", velocity);
         telemetry.addData("Target: ", target);
         telemetry.addData("Output", finalOutput);

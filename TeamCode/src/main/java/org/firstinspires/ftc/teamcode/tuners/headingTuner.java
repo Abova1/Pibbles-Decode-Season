@@ -147,6 +147,12 @@ public class headingTuner extends OpMode {
 
         } else {
 
+            if(gamepad1.right_bumper){
+                targetHeading -= 1.5;
+            } else if(gamepad1.left_bumper){
+                targetHeading += 1.5;
+            }
+
         }
 
 
