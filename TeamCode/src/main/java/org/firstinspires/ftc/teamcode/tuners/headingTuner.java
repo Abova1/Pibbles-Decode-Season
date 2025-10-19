@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.subsystems.DT;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.DataStorage;
 import org.firstinspires.ftc.teamcode.util.Globals;
@@ -27,10 +28,11 @@ public class headingTuner extends OpMode {
     private DcMotorEx motor;
     private PIDController controller;
     private Limelight3A limelight;
+    private DT drivetrain;
 
     private Sensors sensors;
 
-    public static double p = 0, i = 0, d = 0;
+    public static double p = 0.01875, i = 0.005, d = 0.001475;
 
     public static double ticksPerRev = 407.785714286;
     public static double targetHeading = 0;
@@ -42,7 +44,7 @@ public class headingTuner extends OpMode {
     private String positive = "positive";
     private String negative = "negative";
 
-    public static double kTx = 0.5; // how aggressively tx affects targetHeading
+    public static double kTx = 0.07; // how aggressively tx affects targetHeading
 
 
 
@@ -57,6 +59,8 @@ public class headingTuner extends OpMode {
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        drivetrain = new DT(hardwareMap);
 
         sensors = new Sensors(hardwareMap);
         sensors.initIMU();
@@ -78,6 +82,8 @@ public class headingTuner extends OpMode {
     @Override
     public void loop() {
 
+        drivetrain.RCDrive(-(gamepad1.left_stick_y), gamepad1.left_stick_x, gamepad1.right_stick_x);
+
         LLStatus status = limelight.getStatus();
 
         telemetry.addData("Name", "%s",
@@ -97,12 +103,12 @@ public class headingTuner extends OpMode {
         heading = ((degrees % 360));
 
 
-//        if(heading > 359){
-//            targetHeading = 1;
-//        }
-//        else if(heading <= 0.5){
-//            targetHeading = 358;
-//        }
+        if(heading >= 134){
+            targetHeading = -215;
+        }
+        else if(heading <= -224){
+            targetHeading = 130;
+        }
 
         double power = controller.calculate(heading, targetHeading);
 
@@ -133,6 +139,7 @@ public class headingTuner extends OpMode {
         } else {
 
         }
+
 
         telemetry.addData("Calculation", power);
         telemetry.addData("Ticks", ticks);
