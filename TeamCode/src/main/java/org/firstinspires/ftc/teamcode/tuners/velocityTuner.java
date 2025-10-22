@@ -4,17 +4,14 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.controller.wpilibcontroller.SimpleMotorFeedforward;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.util.Globals;
 
 @Config
@@ -29,7 +26,7 @@ public class velocityTuner extends OpMode {
     public DcMotorEx motor1;
     public static double kP = 0, kD = 0, kI = 0, F = 0;
 
-    public static double target = 0;
+    public static double TargetRPM = 0;
     private int previousTicks;
     private long lastUpdateTime;
     public static double Alpha = 0;
@@ -83,22 +80,26 @@ public class velocityTuner extends OpMode {
 
             double RPM = (velocity / Globals.MOTOR_TICKS.RPM_1620.ticksPerRev) * 60;
 
+            double targetVelocityTicksPerSecond = (TargetRPM / 60.0) * Globals.MOTOR_TICKS.RPM_1620.ticksPerRev;
+
+
             previousTicks = currentTicks;
             lastUpdateTime = currentTime;
 
 
-            double velocityError = target - velocity;
+            double velocityError = targetVelocityTicksPerSecond - velocity;
+            double RPMerror = TargetRPM - RPM;
 
-            double PID = controller.calculate(velocity, target);
+            double PID = controller.calculate(velocity, targetVelocityTicksPerSecond);
 
             /*
             the reason why it's target PLUS PID is because it has to be a constant value
             and when it fluctuates the PID controller adds more of a target
             */
-            double finalOutput = target + PID;
+            double finalOutput = targetVelocityTicksPerSecond + PID;
 
             if(velocityError > 50){
-                finalOutput += (F * target);
+                finalOutput += (F * targetVelocityTicksPerSecond);
             }
 
             motor1.setVelocity(finalOutput);
@@ -106,6 +107,7 @@ public class velocityTuner extends OpMode {
             telemetry.addData("Output", finalOutput);
             telemetry.addData("Controller Calculation", PID);
             telemetry.addData("Error: ", velocityError);
+            telemetry.addData("RPM ERROR:", RPMerror);
             telemetry.addData("RPM", RPM);
         }
 
@@ -114,10 +116,7 @@ public class velocityTuner extends OpMode {
 
         telemetry.addData("SDK Motor Velocity: ", motor1.getVelocity());
         telemetry.addData("Velocity: ", velocity);
-        telemetry.addData("Target: ", target);
-
         telemetry.addData("Motor Current in AMPS", motor1.getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("Voltage Sensor", voltageSensor.getVoltage());
         telemetry.addData("Power: ", motor1.getPower());
 
         telemetry.update();
