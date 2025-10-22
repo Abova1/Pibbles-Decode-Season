@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.util.Globals;
 
 @Config
 @Configurable
-@TeleOp(name="Distance + Velocity Test", group="tuners")
+@TeleOp(name="Distance + Velocity Test + Intake", group="tuners")
 
 public class IntakeShooting extends OpMode {
 

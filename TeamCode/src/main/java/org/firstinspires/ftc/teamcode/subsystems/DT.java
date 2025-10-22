@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensors;
-
 public class DT {
 
     private DcMotorEx FL, BL, FR, BR;
@@ -17,6 +15,7 @@ public class DT {
 
         sensors = new Sensors(hardwareMap);
         sensors.initIMU();
+        sensors.resetIMUYaw();
 
         FL = hardwareMap.get(DcMotorEx.class, "FL");
         BL = hardwareMap.get(DcMotorEx.class, "BL");
@@ -52,8 +51,6 @@ public class DT {
     }
 
     public void RCDrive(double y, double x, double rx) {
-        double voltage = sensors.getVoltage();
-        double shorterOutPut = 0.75;
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = (y + x + rx) / denominator;
@@ -61,19 +58,10 @@ public class DT {
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
 
-
-        if(voltage > 13){
-            FL.setPower(frontLeftPower);
-            BL.setPower(backLeftPower);
-            FR.setPower(frontRightPower);
-            BR.setPower(backRightPower);
-        }
-        else{
-            FL.setPower(frontLeftPower * shorterOutPut);
-            BL.setPower(backLeftPower * shorterOutPut);
-            FR.setPower(frontRightPower * shorterOutPut);
-            BR.setPower(backRightPower * shorterOutPut);
-        }
+        FL.setPower(frontLeftPower);
+        BL.setPower(backLeftPower);
+        FR.setPower(frontRightPower);
+        BR.setPower(backRightPower);
 
     }
 

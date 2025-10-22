@@ -14,9 +14,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.subsystems.DT;
-import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensors;
+import org.firstinspires.ftc.teamcode.subsystems.Sensors;
 import org.firstinspires.ftc.teamcode.util.DataStorage;
-import org.firstinspires.ftc.teamcode.util.Globals;
 
 
 @Config

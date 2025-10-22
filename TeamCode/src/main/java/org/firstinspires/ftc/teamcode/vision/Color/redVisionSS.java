@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes.TeleOp;
+package org.firstinspires.ftc.teamcode.vision.Color;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.util.Command.CommandScheduler;
 import org.firstinspires.ftc.teamcode.util.Controller;
-import org.firstinspires.ftc.teamcode.vision.Color.RedSampleLocator;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;

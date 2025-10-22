@@ -23,50 +23,27 @@ import org.firstinspires.ftc.teamcode.util.Globals;
 
 public class velocityTuner extends OpMode {
 
-    /*
-    Values for a 1620 RPM motor:
-    P = 0.7
-    I = 1
-    D = 0.00685
-    alpha = 0.02
-     */
 
     public PIDController controller;
-    public SimpleMotorFeedforward feedforward;
     public VoltageSensor voltageSensor;
     public DcMotorEx motor1;
-    public Servo hood;
-
-//    public static double kS = 0, kV= 0, kA = 0;
     public static double kP = 0, kD = 0, kI = 0, F = 0;
 
     public static double target = 0;
-    public static double ServoPos = 0;
-    private final double MAX_VELOCITY = 10000;
-    private final double MIN_VELOCITY = 0;
     private int previousTicks;
     private long lastUpdateTime;
-
     public static double Alpha = 0;
     private int velocity = 0;
-
-//    public static boolean aBoolean = false;
-
-//    public static double targetV = 0;
-//    public static double targetA = 0;
-
+    public static boolean MOTOR_POWER = false;
 
     @Override
     public void init () {
 
         controller = new PIDController(kP, kI, kD);
-//        feedforward = new SimpleMotorFeedforward(kS, kV, kA);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
-
-        hood = hardwareMap.get(Servo.class, "hood");
 
         motor1 = hardwareMap.get(DcMotorEx.class, "shooter");
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -83,48 +60,61 @@ public class velocityTuner extends OpMode {
 
         controller.setPID(kP, kI, kD);
 
-        /*
-        Using ticks to calculate an actual velocity since
-        .getVelocity likes to go up by 20 ticks/sec which is inconsistent
-        when dealing with the PID controller
-         */
-        long currentTime = System.nanoTime();
-        double deltaTime = (currentTime - lastUpdateTime) / 1e9;
-        int currentTicks = motor1.getCurrentPosition();
-        int deltaTicks = currentTicks - previousTicks;
+        if(MOTOR_POWER){
+            motor1.setPower(1);
+            double RPM = (motor1.getVelocity() / Globals.MOTOR_TICKS.RPM_1620.ticksPerRev) * 60;
 
-        double velocityTicksPerSecond = deltaTicks / deltaTime;
-        //This is a form of the formula for exponential moving average which smooths the values given
-        velocity = (int) (Alpha * velocityTicksPerSecond + (1 - Alpha) * velocity);
+            telemetry.addData("RPM", RPM);
+        } else {
 
-        previousTicks = currentTicks;
-        lastUpdateTime = currentTime;
+            /*
+            Using ticks to calculate an actual velocity since
+            .getVelocity likes to go up by 20 ticks/sec which is inconsistent
+            when dealing with the PID controller
+            */
+            long currentTime = System.nanoTime();
+            double deltaTime = (currentTime - lastUpdateTime) / 1e9;
+            int currentTicks = motor1.getCurrentPosition();
+            int deltaTicks = currentTicks - previousTicks;
 
-        double velocityError = target - velocity;
+            int velocityTicksPerSecond = (int) (deltaTicks / deltaTime);
+            //This is a form of the formula for exponential moving average which smooths the values given
+            velocity = (int) (Alpha * velocityTicksPerSecond + (1 - Alpha) * velocity);
 
-        double PID = controller.calculate(velocity, target);
+            double RPM = (velocity / Globals.MOTOR_TICKS.RPM_1620.ticksPerRev) * 60;
 
-        /*
-        the reason why it's target PLUS PID is because it has to be a constant value
-        and when it fluctuates the PID controller adds more of a target
-        */
-        double finalOutput = Globals.clamp(target + PID , MAX_VELOCITY, MIN_VELOCITY);
+            previousTicks = currentTicks;
+            lastUpdateTime = currentTime;
 
-        if(velocityError > 50){
-            finalOutput += (F * target);
+
+            double velocityError = target - velocity;
+
+            double PID = controller.calculate(velocity, target);
+
+            /*
+            the reason why it's target PLUS PID is because it has to be a constant value
+            and when it fluctuates the PID controller adds more of a target
+            */
+            double finalOutput = target + PID;
+
+            if(velocityError > 50){
+                finalOutput += (F * target);
+            }
+
+            motor1.setVelocity(finalOutput);
+
+            telemetry.addData("Output", finalOutput);
+            telemetry.addData("Controller Calculation", PID);
+            telemetry.addData("Error: ", velocityError);
+            telemetry.addData("RPM", RPM);
         }
 
-        //0.1 is down 0.55 is up
-        hood.setPosition(ServoPos);
       
-        motor1.setVelocity(finalOutput);
+
 
         telemetry.addData("SDK Motor Velocity: ", motor1.getVelocity());
         telemetry.addData("Velocity: ", velocity);
         telemetry.addData("Target: ", target);
-        telemetry.addData("Output", finalOutput);
-        telemetry.addData("Controller Calculation", PID);
-        telemetry.addData("Error: ", velocityError);
 
         telemetry.addData("Motor Current in AMPS", motor1.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Voltage Sensor", voltageSensor.getVoltage());

@@ -50,22 +50,6 @@ public class Globals {
         BLUE
     }
 
-    public enum pipelines{
-
-        Red(1),
-        Blue(2),
-        Motif(3);
-
-        public int index;
-
-        pipelines(int index){
-
-            this.index = index;
-
-        }
-
-    }
-
     public enum Patterns{
         GPP,
         PGP,

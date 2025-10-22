@@ -13,6 +13,7 @@ public class PIDWrapper {
     private PDController PD;
     private double F;
     private double Thresh;
+    private boolean Inversed = false;
 
 
     public PIDWrapper(PIDFController pidf){
@@ -41,10 +42,6 @@ public class PIDWrapper {
         return 0;
     }
 
-    public double diffcalc(double current, double target){
-        return PID.calculate(current, target);
-    }
-
     public void setPIDF(double p, double i, double d, double f){
         PIDF.setPIDF(p, i, d, f);
     }
@@ -63,13 +60,22 @@ public class PIDWrapper {
     public void setVeloThresh(double thresh){
         Thresh = thresh;
     }
+    public void setInverse(boolean inversed){
+        Inversed = inversed;
+    }
 
     public void PositionRun(double current, double target, DcMotorEx... motors){
 
         double power = calc(current, target);
 
         for(DcMotorEx motor : motors){
-            motor.setPower(power);
+
+            if(Inversed) {
+                motor.setPower(-power);
+            } else {
+                motor.setPower(power);
+            }
+
         }
 
     }
@@ -85,24 +91,6 @@ public class PIDWrapper {
 
         for (DcMotorEx motor : motors) {
             motor.setVelocity(finalOutput);
-        }
-
-    }
-
-    //for the limelight if wanted clamps can be made for power
-    public void TurretRun(double current, double target, double MAX, double MIN, double minus, DcMotorEx... motors){
-
-        if(current >= MAX){
-            target = MIN - minus ;
-        }
-        else if(current <= MIN){
-            target = MAX - minus;
-        }
-
-        double power = diffcalc(current, target);
-
-        for(DcMotorEx motor : motors){
-            motor.setPower(power);
         }
 
     }

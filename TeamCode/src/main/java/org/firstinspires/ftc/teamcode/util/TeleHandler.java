@@ -1,29 +1,20 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import org.firstinspires.ftc.teamcode.subsystems.Custom.Turret.Turret;
-import org.firstinspires.ftc.teamcode.subsystems.Gobuilda.Intake.GobuildaIntake;
-import org.firstinspires.ftc.teamcode.subsystems.Gobuilda.Intake.IntakeCommand;
-import org.firstinspires.ftc.teamcode.subsystems.Gobuilda.Intake.OuttakeCommand;
-import org.firstinspires.ftc.teamcode.subsystems.Shooter.Commands.*;
-import org.firstinspires.ftc.teamcode.subsystems.Shooter.Shooters;
+import org.firstinspires.ftc.teamcode.subsystems.Shooter.*;
+import org.firstinspires.ftc.teamcode.subsystems.Shooter.Commands.maxVelocityCommand;
+import org.firstinspires.ftc.teamcode.subsystems.Shooter.Commands.minVelocityCommand;
 import org.firstinspires.ftc.teamcode.util.Command.*;
-
 
 public class TeleHandler {
 
     private RobotState state = RobotState.REGULAR;
-    private Shooters shooter;
-    private Turret turret;
-    private GobuildaIntake intake;
     private Controller Driver, Operator;
+    private Shooter shooter;
     private Object[] subsystems;
-
     private CommandScheduler scheduler;
-    private Command maxVeloCommand;
-    private Command minVeloCommand;
-    private Command IntakeCommand;
-    private Command OuttakeCommand;
 
+    private Command maxShooterVelo;
+    private Command minShooterVelo;
 
     public TeleHandler(Controller driver, CommandScheduler scheduler, Object... subsystems){
 
@@ -33,24 +24,14 @@ public class TeleHandler {
 
         for (Object subsystem : subsystems) {
 
-            if (subsystem instanceof Shooters) {
-                this.shooter = (Shooters) subsystem;
-            }
-
-            if (subsystem instanceof Turret) {
-                this.turret = (Turret) subsystem;
-            }
-
-            if(subsystem instanceof GobuildaIntake){
-                this.intake = (GobuildaIntake) subsystem;
+            if (subsystem instanceof Shooter) {
+                this.shooter = (Shooter) subsystem;
             }
 
         }
 
-        maxVeloCommand = new maxVelocityCommand();
-        minVeloCommand = new minVelocityCommand();
-        IntakeCommand = new IntakeCommand();
-        OuttakeCommand = new OuttakeCommand();
+        maxShooterVelo = new maxVelocityCommand();
+        minShooterVelo = new minVelocityCommand();
 
     }
 
@@ -64,20 +45,16 @@ public class TeleHandler {
             shooter.run();
         }
 
-        if(turret != null){
-            turret.run();
-        }
-
-        if(intake != null){
-            intake.run();
+        if(scheduler != null){
+            scheduler.run();
         }
 
         switch (state){
 
             case REGULAR:
 
-                Driver.buttonPressed(Driver::a, () -> IntakeCommand);
-                Driver.buttonPressed(Driver::b, () -> OuttakeCommand);
+                Driver.buttonPressed(Driver::a, ()-> maxShooterVelo);
+                Driver.buttonPressed(Driver::b, ()-> minShooterVelo);
 
             break;
         }

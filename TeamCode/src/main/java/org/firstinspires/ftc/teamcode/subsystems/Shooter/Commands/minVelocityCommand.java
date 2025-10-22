@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.subsystems.Shooter.Commands;
 
 import androidx.annotation.NonNull;
 
-import org.firstinspires.ftc.teamcode.subsystems.Shooter.Shooters;
+import org.firstinspires.ftc.teamcode.subsystems.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.util.Command.Command;
 
 public class minVelocityCommand implements Command {
 
-    private final double MAX_Velocity = 1000;
+    private final double MAX_Velocity = 2000;
     private final double MIN_Velocity = 0;
     private String name = "Min Velocity Command";
 
@@ -25,8 +25,8 @@ public class minVelocityCommand implements Command {
     @Override
     public void execute() {
 
-        if (Shooters.target != MAX_Velocity) {
-            Shooters.target = MAX_Velocity;
+        if (Shooter.target != MAX_Velocity) {
+            Shooter.setShooterTarget(MAX_Velocity);
         }
 
     }
@@ -39,7 +39,7 @@ public class minVelocityCommand implements Command {
     @Override
     public void end(boolean cancelled) {
         if (cancelled) {
-            Shooters.target = MIN_Velocity;
+            Shooter.setShooterTarget(MIN_Velocity);
         }
     }
 

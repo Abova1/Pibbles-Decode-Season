@@ -23,11 +23,9 @@ import org.firstinspires.ftc.teamcode.util.Globals;
 @TeleOp
 public class TestTeleNoChamber extends LinearOpMode {
 
-    DcMotorEx turret, Intake, Shooter;
-
-    Servo hood;
-
-    DT drive;
+    private DcMotorEx turret, Intake, Shooter;
+    private Servo hood;
+    private DT drive;
 
     public static double kTx = 0.07; // how aggressively tx affects targetHeading
 
@@ -38,9 +36,6 @@ public class TestTeleNoChamber extends LinearOpMode {
 
     public static double ticksPerRev = 407.785714286;
     public static double targetHeading = 0;
-    public static double MAX = 1;
-    public static double MIN = -1;
-
     private double heading;
 
     // how many degrees back is your limelight rotated from perfectly vertical?
@@ -178,13 +173,12 @@ public class TestTeleNoChamber extends LinearOpMode {
             int deltaTicks = currentTicks - previousTicks;
 
             double velocityTicksPerSecond = deltaTicks / deltaTime;
+
             //This is a form of the formula for exponential moving average which smooths the values given
             velocity = (int) (Alpha * velocityTicksPerSecond + (1 - Alpha) * velocity);
 
             previousTicks = currentTicks;
             lastUpdateTime = currentTime;
-
-
 
             double velocityError = target - velocity;
 

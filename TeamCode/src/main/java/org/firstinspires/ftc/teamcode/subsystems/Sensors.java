@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems.Sensors;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
