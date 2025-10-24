@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems.Turret;
+import static java.lang.Math.atan;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -31,6 +32,8 @@ public class Turret {
     private boolean rightBoolean;
     private double leftDouble;
     private double rightDouble;
+
+
 
 
 
@@ -89,16 +92,6 @@ public class Turret {
 
     }
 
-    //ANALOG ENCODER VALUES
-    public double getAnalogHeading() {
-
-        double voltage = Encoder.getVoltage();
-
-        double degrees = (voltage / 3.3) * 360;
-
-        return (((degrees % 360) + 360) % 360);
-    }
-
     //ME is MOTOR ENCODER
     public double getMEHeading() {
 
@@ -136,7 +129,7 @@ public class Turret {
         rightBoolean = right;
     }
 
-    public void runAutoTracking(){
+    public void runAutoTrackingLL(){
 
         LLResult result = limelight.getLatestResult();
 
@@ -191,6 +184,47 @@ public class Turret {
         hood.setPosition(ServoPosCalculation);
         TurretController.PositionRun(heading, targetHeading, turret);
 
+
     }
+    public void alignTurret(double x, double y, double heading, boolean blue) {
+        double RobotHeadingDeg = Math.toDegrees(heading);
+        double goalX = blue ? Constants.blueGoalX : Constants.redGoalX;
+        double goalY = blue ? Constants.blueGoalY : Constants.redGoalY;
+
+        x = Constants.turretOffsetX + x;
+        y = Constants.turretOffsetY + y;
+
+        double angleToGoal = Math.toDegrees(Math.atan2(goalX - x, goalY - y));
+        double turretAngle = angleToGoal + RobotHeadingDeg;
+
+        // you can either clamp, or try this:
+        /*
+        if (turretAngle > Constants.upperThreshold) {
+        turretAngle -= 360;
+    } else if (turretAngle < Constants.lowerThreshold) {
+        turretAngle += 360;
+    }
+         */
+        Globals.clamp(turretAngle, Constants.upperThreshold, Constants.lowerThreshold);
+
+
+        double distance = Math.hypot(goalX-x, goalY-y);
+        ServoPosCalculation = ((-0.00391524) * (distance)) + 0.696695; //REDO THIS EQUATION SINCE ITS USING OLD LL EQUATION!!!!!!!
+        ServoPosCalculation = Globals.clamp(ServoPosCalculation, 0.55, 0.1);
+
+        hood.setPosition(ServoPosCalculation);
+
+
+
+
+
+        setTargetHeading(turretAngle);
+
+
+
+
+
+    }
+
 
 }
