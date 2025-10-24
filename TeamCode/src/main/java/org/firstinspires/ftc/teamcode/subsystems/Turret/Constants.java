@@ -29,6 +29,8 @@ class Constants {
     // distance from the center of the Limelight lens to the floor
     public static double limelightLensHeightInches = 13.50173228;
     public static double goalHeightInches = 29.5; //29.5" from floor to apriltag
+    public static double hoodUp = 0.55;
+    public static double hoodDown = 0.1;
 
 
 }

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.util.Globals;
 import org.firstinspires.ftc.teamcode.util.PIDWrapper;
 
 public class Shooter {
@@ -57,6 +58,11 @@ public class Shooter {
         lastUpdateTime = currentTime;
 
         return Velocity;
+    }
+
+    public double getRPM(){
+        return (getVelo() /Constants.TPR) * 60;
+
     }
 
     public void run(){

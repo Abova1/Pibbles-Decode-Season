@@ -43,8 +43,6 @@ import org.firstinspires.ftc.teamcode.util.Command.*;
 
 public class Globals {
 
-    public static ElapsedTime GlobalTimer = new ElapsedTime();
-
     public enum Alliance {
         RED,
         BLUE
@@ -116,7 +114,7 @@ public class Globals {
 
     public enum SERVO_TYPES {
         AXON_MAX(60.0 / 0.115, 34.0),
-        AXON_MINI(60.0 / 0.90, 25),
+        AXON_MINI(60.0 / 0.090, 25),
         AXON_MICRO(60.0 / 0.075, 7.8),
         SWYFT_TORQUE(60.0 / 0.112, 33.5 ),
         GOBUILDA_TORQUE(60.0 / 0.20, 21.6),
@@ -154,7 +152,7 @@ public class Globals {
         return position * servo.Angle;
     }
 
-    public static long SHUBArmEstimates(SERVO_TYPES servo, int numServos, double armMass /*In KG*/, double armLength /*In CM*/, double angle){
+    public static long ArmEstimates(SERVO_TYPES servo, int numServos, double armMass /*In KG*/, double armLength /*In CM*/, double angle){
 
         double GRAVITY = 9.81;
 
@@ -171,7 +169,7 @@ public class Globals {
         return (long) (estimatedTime * 1000);
     }
 
-    public static long CHUBArmEstimates(CHUB_SERVO_TYPES servo, int numServos, double armMass /*In KG*/, double armLength /*In CM*/, double angle){
+    public static long ArmEstimates(CHUB_SERVO_TYPES servo, int numServos, double armMass /*In KG*/, double armLength /*In CM*/, double angle){
 
         double GRAVITY = 9.81;
 
@@ -187,6 +185,46 @@ public class Globals {
 
         return (long) (estimatedTime * 1000);
     }
+
+    public static long pulleyTimeEstimate(SERVO_TYPES servo, double angleDeg, double pulleyRadiusCm, double massKg) {
+
+        double GRAVITY = 9.81;
+
+        double omegaRadPerSec = servo.speed * Math.PI / 180.0;
+        double thetaRad = angleDeg * Math.PI / 180.0;
+        double baseTime = thetaRad / omegaRadPerSec;
+        double r = pulleyRadiusCm / 100.0;
+
+        double loadTorque = massKg * GRAVITY * r;
+        double stallTorque = servo.stallTorque * 0.0980665; //unit conversion
+
+        double loadFactor = 1 + (stallTorque > 0 ? loadTorque / stallTorque : 0);
+        double totalTime = baseTime * loadFactor;
+
+        return (long) (totalTime * 1000);
+    }
+
+    public static long pulleyTimeEstimate(CHUB_SERVO_TYPES servo, double angleDeg, double pulleyRadiusCm, double massKg) {
+
+        double GRAVITY = 9.81;
+
+        double omegaRadPerSec = servo.speed * Math.PI / 180.0;
+
+        double thetaRad = angleDeg * Math.PI / 180.0;
+
+        double baseTime = thetaRad / omegaRadPerSec;
+
+        double r = pulleyRadiusCm / 100.0;
+
+        double loadTorque = massKg * GRAVITY * r;
+        double stallTorque = servo.stallTorque * 0.0980665; //unit conversion
+
+        double loadFactor = 1 + (stallTorque > 0 ? loadTorque / stallTorque : 0);
+        double totalTime = baseTime * loadFactor;
+
+        return (long) (totalTime * 1000);
+    }
+
 
     public static double clamp(double value, double max, double min){
         if(value > max){
@@ -208,6 +246,8 @@ public class Globals {
     //Only Useful for anything other than Parallel Commands
     public static Command waitFor(double milliseconds){
         return new Command() {
+
+            ElapsedTime GlobalTimer = new ElapsedTime();
             boolean finished = false;
             @Override
             public void init() {

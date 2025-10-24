@@ -25,9 +25,7 @@ public class minVelocityCommand implements Command {
     @Override
     public void execute() {
 
-        if (Shooter.target != MAX_Velocity) {
-            Shooter.setShooterTarget(MAX_Velocity);
-        }
+        Shooter.setShooterTarget(MAX_Velocity);
 
     }
 
