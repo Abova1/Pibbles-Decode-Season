@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
+    
     public static FollowerConstants followerConstants = new FollowerConstants()
     .mass(8.3461);
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
@@ -24,30 +25,37 @@ public class Constants {
             .rightRearMotorName("BR")
             .leftRearMotorName("BL")
             .leftFrontMotorName("FL")
-            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
+            .leftFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE);
+
+
+    public static PinpointConstants localizerConstants=  new PinpointConstants()
+            .forwardPodY(-5)
+            .strafePodX(.5)
+            .distanceUnit(DistanceUnit.INCH)
+            .hardwareMapName("pinpoint")
+            .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
 
     public static Follower createFollower(HardwareMap hardwareMap) {
-        FollowerBuilder followerBuilder = new FollowerBuilder(followerConstants, hardwareMap)
-                .pathConstraints(pathConstraints)
-                .mecanumDrivetrain(driveConstants);
-        followerBuilder.build();
-
-        PinpointConstants localizerConstants = new PinpointConstants()
-                .forwardPodY(-5)
-                .strafePodX(.5)
-                .distanceUnit(DistanceUnit.INCH)
-                .hardwareMapName("pinpoint")
-                .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-                .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
-                .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-
         return new FollowerBuilder(followerConstants, hardwareMap)
+                .pathConstraints(pathConstraints)
+                .mecanumDrivetrain(driveConstants)
                 .pinpointLocalizer(localizerConstants)
-                /* other builder steps */
                 .build();
+
+//        PinpointConstants localizerConstants = new PinpointConstants()
+//                .forwardPodY(-5)
+//                .strafePodX(.5)
+//                .distanceUnit(DistanceUnit.INCH)
+//                .hardwareMapName("pinpoint")
+//                .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
+//                .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+//                .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+
     }
 }
