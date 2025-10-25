@@ -64,7 +64,7 @@ public class MylesAlignTurretTeleOpTest extends OpMode {
 
         telemetry.addData("Status", "Initialized");
         follower = Constants.createFollower(hardwareMap);
-        Pose startPose = new Pose(56,72,54);
+        Pose startPose = new Pose(23.629279390557905,120.3707206094421, Math.toRadians(180));
         follower.setStartingPose(autoEndPose == null ? startPose : autoEndPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -84,7 +84,6 @@ public class MylesAlignTurretTeleOpTest extends OpMode {
         telemetryM.update();
         teleHandler.TeleOp();
         telemetry.addLine(scheduler.currentCommandScheduled());
-        telemetry.update();
 
 
         if (!automatedDrive) {
@@ -95,9 +94,8 @@ public class MylesAlignTurretTeleOpTest extends OpMode {
             follower.followPath(ParkpathChain.get());
             automatedDrive = true;
         }
-        turret.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), true);
-
          */
+        turret.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), true);
 
 
 
@@ -109,7 +107,10 @@ public class MylesAlignTurretTeleOpTest extends OpMode {
         telemetry.addData("X: ", follower.getPose().getX());
         telemetry.addData("Y: ", follower.getPose().getY());
         telemetry.addData("Heading: ", follower.getPose().getHeading());
-        telemetry.addData("Turret Pos: ", turret.getMEHeading());
+        telemetry.addData("Turret Pos: ", turret.getTurretAngle());
+        telemetry.addData("Encoder Heading Pos: ", turret.getMEHeading());
+        telemetry.addData("Turret Encoder Pos: ", turret.getTurretPos());
+        telemetry.addData("Pedro Distance", turret.getPDistance());
         telemetry.update();
     }
     public void stop() {

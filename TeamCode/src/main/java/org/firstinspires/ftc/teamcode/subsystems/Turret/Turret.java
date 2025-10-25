@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.subsystems.Turret;
-import static java.lang.Math.atan;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -22,16 +21,20 @@ public class Turret {
     private Servo hood;
     private AnalogInput Encoder;
     private PIDWrapper TurretController = new PIDWrapper(new PIDController(Constants.Tp, Constants.Ti, Constants.Td));
+
+    private PIDController controller;
     private Sensors sensors;
     private double targetHeading;
     private Limelight3A limelight;
-    private double heading;
+    private double turretHeading;
     private double distanceFromLimelightToGoalInches;
+    private double distance;
     private double ServoPosCalculation;
     private boolean leftBoolean;
     private boolean rightBoolean;
     private double leftDouble;
     private double rightDouble;
+    public double turretAngle;
 
 
 
@@ -39,11 +42,13 @@ public class Turret {
 
     public Turret(HardwareMap hardwareMap){
 
-        turret = hardwareMap.get(DcMotorEx.class, "motor0");
+        turret = hardwareMap.get(DcMotorEx.class, "turret");
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turret.setDirection(DcMotorSimple.Direction.REVERSE);
 
         hood = hardwareMap.get(Servo.class, "hood");
+
+        controller = new PIDController(Constants.Tp, Constants.Ti, Constants.Td);
 
         limelight = hardwareMap.get(Limelight3A.class, "Limelight");
         limelight.start();
@@ -51,7 +56,7 @@ public class Turret {
         limelight.setPollRateHz(150);
 
 
-        Encoder = hardwareMap.get(AnalogInput.class, "Turret Encoder");
+//        Encoder = hardwareMap.get(AnalogInput.class, "Turret Encoder");
 
         sensors = new Sensors(hardwareMap);
         sensors.initIMU();
@@ -59,7 +64,7 @@ public class Turret {
 
         reset();
 
-        heading = getMEHeading();
+        turretHeading = getMEHeading();
 
     }
 
@@ -82,6 +87,10 @@ public class Turret {
     }
     public void setHoodPos(double pos){
         hood.setPosition(pos);
+    }
+
+    public double getPDistance(){
+        return distance;
     }
 
 
@@ -108,6 +117,12 @@ public class Turret {
 
         return degrees % 360;
 
+    }
+
+
+
+    public double getTurretAngle(){
+        return turretAngle;
     }
 
 
@@ -159,7 +174,9 @@ public class Turret {
         y = Constants.turretOffsetY + y;
 
         double angleToGoal = Math.toDegrees(Math.atan2(goalX - x, goalY - y));
-        double turretAngle = angleToGoal + RobotHeadingDeg;
+        turretAngle = angleToGoal + RobotHeadingDeg - 90;
+
+
 
         // you can either clamp, or try this:
         /*
@@ -174,16 +191,16 @@ public class Turret {
         turretAngle = Globals.clamp(turretAngle, Constants.upperThreshold, Constants.lowerThreshold);
 
 
-        double distance = Math.hypot(goalX-x, goalY-y);
+        distance = Math.hypot(goalX-x, goalY-y);
         ServoPosCalculation = ((-0.00391524) * (distance)) + 0.696695; //REDO THIS EQUATION SINCE ITS USING OLD LL EQUATION!!!!!!!
         ServoPosCalculation = Globals.clamp(ServoPosCalculation, Constants.hoodUp, Constants.hoodDown);
 
-        hood.setPosition(ServoPosCalculation);
-        setTargetHeading(turretAngle);
+        controller.setPID(Constants.Tp, Constants.Ti, Constants.Td);
 
-        TurretController.setPID(Constants.Tp, Constants.Ti, Constants.Td);
-        TurretController.setInverse(true);
-        TurretController.PositionRun(heading, targetHeading, turret);
+        int targetTicks = (int) (Constants.tSlope * turretAngle);
+        double power = controller.calculate(getTurretPos(), targetTicks);
+        turret.setPower(-power);
+
 
     }
 
@@ -195,12 +212,12 @@ public class Turret {
         TurretController.setPID(Constants.Tp, Constants.Ti, Constants.Td);
         TurretController.setInverse(true);
 
-        double headingError = targetHeading - heading;
+        double headingError = targetHeading - turretHeading;
 
-        if (heading > Constants.upperThreshold && headingError > 0) {
+        if (turretHeading > Constants.upperThreshold && headingError > 0) {
             // About to go past upper limit, unwrap clockwise
             targetHeading -= 360;
-        } else if (heading < Constants.lowerThreshold && headingError < 0) {
+        } else if (turretHeading < Constants.lowerThreshold && headingError < 0) {
             // About to go past lower limit, unwrap counter-clockwise
             targetHeading += 360;
         }
@@ -241,7 +258,7 @@ public class Turret {
         ServoPosCalculation = Globals.clamp(ServoPosCalculation, 0.55, 0.1);
 
         hood.setPosition(ServoPosCalculation);
-        TurretController.PositionRun(heading, targetHeading, turret);
+        TurretController.PositionRun(turretHeading, targetHeading, turret);
 
 
     }
