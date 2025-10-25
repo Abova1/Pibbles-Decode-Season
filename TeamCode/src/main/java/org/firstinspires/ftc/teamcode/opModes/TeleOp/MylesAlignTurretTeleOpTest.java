@@ -114,6 +114,7 @@ public class MylesAlignTurretTeleOpTest extends OpMode {
         telemetry.update();
     }
     public void stop() {
-        autoEndPose = follower.getPose();
+        autoEndPose = null; //CHANGE WHEN WE ADD AN AUTONOMOUS TO BELOW!
+        //autoEndPose = follower.getPose();
     }
 }

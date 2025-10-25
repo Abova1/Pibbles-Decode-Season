@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.Turret;
 
+import android.provider.Settings;
+
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -188,7 +190,7 @@ public class Turret {
          */
 
         // you have to reassign the value
-        turretAngle = Globals.clamp(turretAngle, Constants.upperThreshold, Constants.lowerThreshold);
+
 
 
         distance = Math.hypot(goalX-x, goalY-y);
@@ -198,6 +200,7 @@ public class Turret {
         controller.setPID(Constants.Tp, Constants.Ti, Constants.Td);
 
         int targetTicks = (int) (Constants.tSlope * turretAngle);
+        targetTicks = (int) Globals.clamp(targetTicks, Constants.upperThreshold, Constants.lowerThreshold);
         double power = controller.calculate(getTurretPos(), targetTicks);
         turret.setPower(-power);
 
