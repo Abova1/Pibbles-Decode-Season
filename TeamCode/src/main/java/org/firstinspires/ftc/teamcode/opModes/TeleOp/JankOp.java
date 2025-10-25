@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.opModes.TeleOp;
 
-
-
-
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
@@ -14,9 +12,14 @@ import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.subsystems.Chamber.Chamber;
 import org.firstinspires.ftc.teamcode.subsystems.DT;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.tuners.pedroPathing.Constants;
@@ -25,18 +28,21 @@ import java.util.function.Supplier;
 import org.firstinspires.ftc.teamcode.subsystems.Turret.Turret;
 import org.firstinspires.ftc.teamcode.util.Command.CommandScheduler;
 import org.firstinspires.ftc.teamcode.util.Controller;
+import org.firstinspires.ftc.teamcode.util.Globals;
 import org.firstinspires.ftc.teamcode.util.TeleHandler;
 
 
 @Configurable
-@TeleOp (name = "MylesAlignTurretTele", group = "TeleOp")
-public class MylesAlignTurretTeleOpTest extends OpMode {
+@TeleOp (name = "Full Jank Tele", group = "TeleOp")
+public class JankOp extends OpMode {
 
     private Shooter shooter;
     private CommandScheduler scheduler;
     private Controller Driver;
     private TeleHandler teleHandler;
     private Turret turret;
+
+
 
     public static Follower follower;
     private TelemetryManager telemetryM;
@@ -45,22 +51,50 @@ public class MylesAlignTurretTeleOpTest extends OpMode {
 
     private Supplier<PathChain> ParkpathChain;
 
-    private DT drive;
     public static Pose autoEndPose;
+
+
+    private DcMotorEx Intake, Shooter;
+    private Servo hood, chamber;
+
+    private PIDController ShooterController;
+
+    public double Sp = 0.001, Sd = 0.002, Si = 0, F = 0.001;
+
+
+    public double target = 0;
+    private final double MAX_VELOCITY = 10000;
+    private final double MIN_VELOCITY = 0;
+    private int previousTicks;
+    private long lastUpdateTime;
+
+    public double distanceFromLimelightToGoalInches;
+
+    public double ServoPosCalculation;
+
+    public double Alpha = 0.3;
+    private int velocity = 0;
+
+
 
     public void init() {
 
-        shooter = new Shooter(hardwareMap);
+        ShooterController = new PIDController(Sp, Si, Sd);
+        Shooter = hardwareMap.get(DcMotorEx.class, "shooter");
+        Shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        scheduler = new CommandScheduler();
+        hood = hardwareMap.get(Servo.class, "hood");
+        chamber = hardwareMap.get(Servo.class, "chamber");
 
-        Driver = new Controller(gamepad1, scheduler);
-
-        teleHandler = new TeleHandler(Driver, scheduler, shooter);
+        Intake = hardwareMap.get(DcMotorEx.class, "intake");
+        Intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         turret = new Turret(hardwareMap);
 
-        drive = new DT(hardwareMap);
 
         telemetry.addData("Status", "Initialized");
         follower = Constants.createFollower(hardwareMap);
@@ -77,12 +111,61 @@ public class MylesAlignTurretTeleOpTest extends OpMode {
     }
     public void start() {
         follower.startTeleopDrive();
+
     }
     public void loop() {
         follower.update();
         telemetryM.update();
-        teleHandler.TeleOp();
-        telemetry.addLine(scheduler.currentCommandScheduled());
+
+
+
+        long currentTime = System.nanoTime();
+        double deltaTime = (currentTime - lastUpdateTime) / 1e9;
+        int currentTicks = Shooter.getCurrentPosition();
+        int deltaTicks = currentTicks - previousTicks;
+
+        double velocityTicksPerSecond = deltaTicks / deltaTime;
+
+        //This is a form of the formula for exponential moving average which smooths the values given
+        velocity = (int) (Alpha * velocityTicksPerSecond + (1 - Alpha) * velocity);
+
+        previousTicks = currentTicks;
+        lastUpdateTime = currentTime;
+
+        double velocityError = target - velocity;
+
+        double PID = ShooterController.calculate(velocity, target);
+
+        double finalOutput = Globals.clamp(target + PID , MAX_VELOCITY, MIN_VELOCITY);
+
+        if(velocityError > 50){
+            finalOutput += (F * target);
+        }
+
+        //0.1 is down 0.55 is up
+        ServoPosCalculation = ((-0.00391524) * (turret.getPDistance())) + 0.696695;
+
+        ServoPosCalculation = Globals.clamp(ServoPosCalculation, 0.55, 0.1);
+
+        hood.setPosition(ServoPosCalculation);
+
+        Shooter.setVelocity(finalOutput);
+
+        if(gamepad1.dpad_down){
+            target = 2000;
+        } else if (gamepad1.dpad_up) {
+            target = 2580;
+        } else if (gamepad1.dpad_right) {
+            target = 0;
+        }
+
+        if(gamepad1.a){
+            Intake.setPower(1);
+        }else {
+            Intake.setPower(0);
+        }
+
+        telemetry.update();
 
 
         if (!automatedDrive) {

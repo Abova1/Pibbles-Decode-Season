@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import org.firstinspires.ftc.teamcode.subsystems.Chamber.Chamber;
+import org.firstinspires.ftc.teamcode.subsystems.Intake.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter.*;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter.Commands.maxVelocityCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter.Commands.minVelocityCommand;
@@ -10,6 +12,11 @@ public class TeleHandler {
     private RobotState state = RobotState.REGULAR;
     private Controller Driver, Operator;
     private Shooter shooter;
+    private Chamber chamber;
+    private Intake intake;
+
+
+
     private Object[] subsystems;
     private CommandScheduler scheduler;
 
@@ -45,9 +52,6 @@ public class TeleHandler {
             shooter.run();
         }
 
-        if(scheduler != null){
-            scheduler.run();
-        }
 
         switch (state){
 
