@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.opModes.TeleOp;
 
 
+import static org.firstinspires.ftc.teamcode.tuners.pedroPathing.Tuning.drawOnlyCurrent;
+import static org.firstinspires.ftc.teamcode.tuners.pedroPathing.Tuning.draw;
+import static org.firstinspires.ftc.teamcode.tuners.pedroPathing.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.tuners.pedroPathing.Tuning.stopRobot;
 
-
+import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
@@ -19,6 +23,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.DT;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter.Shooter;
+import org.firstinspires.ftc.teamcode.subsystems.Turret.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.tuners.pedroPathing.Constants;
 
 import java.util.function.Supplier;
@@ -36,12 +41,17 @@ public class MylesAlignTurretTeleOpTest extends OpMode {
     private CommandScheduler scheduler;
     private Controller Driver;
     private TeleHandler teleHandler;
+    private ShooterSubsystem shooterSubsystem;
+
     private Turret turret;
 
     public static Follower follower;
     private TelemetryManager telemetryM;
 
     public boolean automatedDrive;
+
+    public static int testposition;
+    public static double P = 0;
 
     private Supplier<PathChain> ParkpathChain;
 
@@ -60,11 +70,13 @@ public class MylesAlignTurretTeleOpTest extends OpMode {
 
         turret = new Turret(hardwareMap);
 
+
+        shooterSubsystem = new ShooterSubsystem(hardwareMap);
         drive = new DT(hardwareMap);
 
         telemetry.addData("Status", "Initialized");
         follower = Constants.createFollower(hardwareMap);
-        Pose startPose = new Pose(56,72,54);
+        Pose startPose = new Pose(23.629279390557905,120.3707206094421, Math.toRadians(0));
         follower.setStartingPose(autoEndPose == null ? startPose : autoEndPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -84,7 +96,6 @@ public class MylesAlignTurretTeleOpTest extends OpMode {
         telemetryM.update();
         teleHandler.TeleOp();
         telemetry.addLine(scheduler.currentCommandScheduled());
-        telemetry.update();
 
 
         if (!automatedDrive) {
@@ -95,11 +106,10 @@ public class MylesAlignTurretTeleOpTest extends OpMode {
             follower.followPath(ParkpathChain.get());
             automatedDrive = true;
         }
-        turret.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), true);
-
          */
+//        shooterSubsystem.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), true, telemetry);
 
-
+        turret.pinpointTurret(follower.getHeading());
 
 
         telemetryM.debug("position", follower.getPose());
@@ -109,7 +119,12 @@ public class MylesAlignTurretTeleOpTest extends OpMode {
         telemetry.addData("X: ", follower.getPose().getX());
         telemetry.addData("Y: ", follower.getPose().getY());
         telemetry.addData("Heading: ", follower.getPose().getHeading());
-        telemetry.addData("Turret Pos: ", turret.getMEHeading());
+        telemetry.addData("Robot Heading", turret.getRobotHeading());
+        telemetry.addData("Turret Offset", turret.getTurretOffset());
+        telemetry.addData("TurretHeading", turret.getMEHeading());
+
+        telemetryM.update(telemetry);
+
         telemetry.update();
     }
     public void stop() {
