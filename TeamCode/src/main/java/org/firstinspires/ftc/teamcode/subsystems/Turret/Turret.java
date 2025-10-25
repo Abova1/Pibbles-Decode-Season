@@ -44,7 +44,7 @@ public class Turret {
 
         turret = hardwareMap.get(DcMotorEx.class, "turret");
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        turret.setDirection(DcMotorSimple.Direction.REVERSE);
+        turret.setDirection(DcMotorSimple.Direction.FORWARD);
 
         hood = hardwareMap.get(Servo.class, "hood");
 
