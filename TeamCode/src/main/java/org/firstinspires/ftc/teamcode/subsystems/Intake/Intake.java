@@ -21,7 +21,7 @@ public class Intake {
 
     public Intake (HardwareMap hardwareMap){
 
-        intake = hardwareMap.get(DcMotorEx.class, "Intake");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         reset();
 
@@ -38,6 +38,10 @@ public class Intake {
     public double getPos(){
         return intake.getCurrentPosition();
     }
+    public static void setIntakeTarget(double newTarget){
+        target = newTarget;
+    }
+
 
     public double getVelo(){
 
@@ -59,7 +63,7 @@ public class Intake {
 
         double velo = getVelo();
 
-        veloPID.setPID(Constants.Ip, Constants.Ii, Constants.Ip);
+        veloPID.setPID(Constants.Ip, Constants.Ii, Constants.Id);
         veloPID.setF(Constants.If);
         veloPID.setVeloThresh(Constants.VeloErrorThresh);
         veloPID.VelocityRun(velo, target, Constants.MAX_VELOCITY, Constants.MIN_VELOCITY, intake);

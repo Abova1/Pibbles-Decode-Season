@@ -5,15 +5,15 @@ import androidx.annotation.NonNull;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.util.Command.Command;
 
-public class maxVelocityCommand implements Command {
+public class FarCommand implements Command {
 
     private final double MAX_Velocity = 2580;
     private final double MIN_Velocity = 0;
 
-    private String name = "MaxVeloCommand";
+    private String name = "Far Shooter Command";
 
 
-    public maxVelocityCommand(){}
+    public FarCommand(){}
 
     @NonNull
     @Override

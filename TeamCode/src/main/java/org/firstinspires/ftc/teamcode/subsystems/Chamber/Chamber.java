@@ -27,6 +27,14 @@ public class Chamber {
         holder.setPosition(Constants.HolderDown);
     }
 
+    public void setChamberPos(double Pos){
+        chamber.setPosition(Pos);
+    }
+    public void setHolderPos(double Pos){
+        chamber.setPosition(Pos);
+    }
+
+
     public double getChamberPos(){
         return chamber.getPosition();
     }
@@ -62,7 +70,7 @@ public class Chamber {
             @Override
             public void init() {
                 chamberTimer.reset();
-                timeNeeded = Globals.pulleyTimeEstimate(Globals.CHUB_SERVO_TYPES.AXON_MAX, angleDeg, 0 ,0);
+                timeNeeded = Globals.pulleyTimeEstimate(Globals.CHUB_SERVO_TYPES.AXON_MAX, angleDeg, Constants.pulleyRad ,0);
             }
 
             @Override
@@ -91,7 +99,7 @@ public class Chamber {
             @Override
             public void init() {
                 chamberTimer.reset();
-                timeNeeded = Globals.pulleyTimeEstimate(Globals.CHUB_SERVO_TYPES.AXON_MAX, angleDeg, 0 ,0);
+                timeNeeded = Globals.pulleyTimeEstimate(Globals.CHUB_SERVO_TYPES.AXON_MAX, angleDeg, Constants.pulleyRad  ,0);
             }
 
             @Override

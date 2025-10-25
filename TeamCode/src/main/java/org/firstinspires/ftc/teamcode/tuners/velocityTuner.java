@@ -26,6 +26,8 @@ public class velocityTuner extends OpMode {
     public DcMotorEx motor1;
     public static double kP = 0, kD = 0, kI = 0, F = 0;
 
+    public static double TPR = Globals.MOTOR_TICKS.RPM_1150.ticksPerRev;
+
     public static double TargetRPM = 0;
     private int previousTicks;
     private long lastUpdateTime;
@@ -59,7 +61,7 @@ public class velocityTuner extends OpMode {
 
         if(MOTOR_POWER){
             motor1.setPower(1);
-            double RPM = (motor1.getVelocity() / Globals.MOTOR_TICKS.RPM_6000.ticksPerRev) * 60;
+            double RPM = (motor1.getVelocity() / TPR) * 60;
 
             telemetry.addData("RPM", RPM);
         } else {
@@ -79,9 +81,9 @@ public class velocityTuner extends OpMode {
             //This is a form of the formula for exponential moving average which smooths the values given
             velocity = (int) (Alpha * velocityTicksPerSecond + (1 - Alpha) * velocity);
 
-            double RPM = (velocity / Globals.MOTOR_TICKS.RPM_6000.ticksPerRev) * 60;
+            double RPM = (velocity / TPR) * 60;
 
-            double targetVelocityTicksPerSecond = (TargetRPM / 60.0) * Globals.MOTOR_TICKS.RPM_6000.ticksPerRev;
+            double targetVelocityTicksPerSecond = (TargetRPM / 60.0) * TPR;
 
             previousTicks = currentTicks;
             lastUpdateTime = currentTime;

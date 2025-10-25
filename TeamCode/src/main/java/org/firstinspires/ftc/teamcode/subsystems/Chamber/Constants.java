@@ -7,5 +7,7 @@ class Constants {
     public static double HolderDown = 0.7;
     public static double HolderUp = 0.55;
 
+    public static double pulleyRad = 5.30; //cm
+
 
 }
