@@ -26,18 +26,11 @@ public class headingTuner extends OpMode {
 
     private DcMotorEx motor;
     private PIDController controller;
-    private Limelight3A limelight;
-    private DT drivetrain;
-
-    private Sensors sensors;
 
     public static double p = 0.01875, i = 0.005, d = 0.001475;
 
     public static double ticksPerRev = 407.785714286;
     public static double targetHeading = 0;
-    public static double MAX = 1;
-    public static double MIN = -1;
-    private double previousHeading;
     private double heading;
     private String direction = " ";
     private String positive = "positive";
@@ -59,40 +52,17 @@ public class headingTuner extends OpMode {
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        drivetrain = new DT(hardwareMap);
-
-        sensors = new Sensors(hardwareMap);
-        sensors.initIMU();
-
-        limelight = hardwareMap.get(Limelight3A.class, "Limelight");
-
-        previousHeading = DataStorage.loadHeading();
 
     }
 
     @Override
     public void start(){
-        limelight.start();
-        limelight.pipelineSwitch(1);
-        limelight.setPollRateHz(150);
+
     }
 
 
     @Override
     public void loop() {
-
-        drivetrain.RCDrive(-(gamepad1.left_stick_y), gamepad1.left_stick_x, gamepad1.right_stick_x);
-
-        LLStatus status = limelight.getStatus();
-
-        telemetry.addData("Name", "%s",
-                status.getName());
-        telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
-                status.getTemp(), status.getCpu(), (int) status.getFps());
-        telemetry.addData("Pipeline", "Index: %d, Type: %s",
-                status.getPipelineIndex(), status.getPipelineType());
-
-        LLResult result = limelight.getLatestResult();
 
         controller.setPID(p, i, d);
 
@@ -100,27 +70,10 @@ public class headingTuner extends OpMode {
         double degrees = (ticks / ticksPerRev) * 360;
 
         heading = ((degrees % 360));
-        //min is -250 max is 135
-
-
-// Safety thresholds
-        double upperThreshold = 122.5;
-        double lowerThreshold = -237.5;
 
         double headingError = targetHeading - heading;
 
-        if (heading > upperThreshold && headingError > 0) {
-            // About to go past upper limit, unwrap clockwise
-            targetHeading -= 360;
-        } else if (heading < lowerThreshold && headingError < 0) {
-            // About to go past lower limit, unwrap counter-clockwise
-            targetHeading += 360;
-        }
-
-
         double power = controller.calculate(heading, targetHeading);
-
-//        power = Globals.clamp(power, MAX, MIN);
 
         motor.setPower(-power);
 
@@ -134,25 +87,6 @@ public class headingTuner extends OpMode {
             direction = "No Direction";
         }
 
-        if (result != null && result.isValid()) {
-            double tx = result.getTx(); // How far left or right the target is (degrees)
-            double ty = result.getTy(); // How far up or down the target is (degrees)
-
-            telemetry.addData("Target X", tx);
-            telemetry.addData("Target Y", ty);
-
-            targetHeading -= kTx * tx;
-
-
-        } else {
-
-            if(gamepad1.right_bumper){
-                targetHeading -= 1.5;
-            } else if(gamepad1.left_bumper){
-                targetHeading += 1.5;
-            }
-
-        }
 
 
         telemetry.addData("Calculation", power);
@@ -161,7 +95,6 @@ public class headingTuner extends OpMode {
         telemetry.addData("Heading", heading);
         telemetry.addData("Heading Error", headingError);
         telemetry.addData("Direction", direction);
-        telemetry.addData("Previous Heading", previousHeading);
         telemetry.update();
 
     }
@@ -169,7 +102,6 @@ public class headingTuner extends OpMode {
     @Override
     public void stop(){
 
-        DataStorage.saveHeading(heading);
 
     }
 

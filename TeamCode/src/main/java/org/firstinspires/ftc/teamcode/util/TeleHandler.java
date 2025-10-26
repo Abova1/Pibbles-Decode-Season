@@ -37,6 +37,7 @@ public class TeleHandler {
     //Special Commands
     private Command Shoot;
     private Command diffShoot;
+    private Command newShoot;
 
 
     public TeleHandler(Controller driver, CommandScheduler scheduler, Object... subsystems){
@@ -79,6 +80,11 @@ public class TeleHandler {
                 IntakeCommand
         );
 
+        newShoot = new ParallelCommand(
+                FarShoot,
+                IntakeCommand
+        );
+
     }
 
     public RobotState getState(){
@@ -102,9 +108,10 @@ public class TeleHandler {
         switch (state){
 
             case REGULAR:
-                Driver.buttonPressed(Driver::a, ()-> Shoot);
-                Driver.buttonPressed(Driver::b, ()-> IntakeCommand);
-                Driver.buttonPressed(Driver::x, ()-> OuttakeCommand);
+                Driver.buttonPressed(Driver::y, ()-> newShoot);
+                Driver.buttonPressed(Driver::a, ()-> diffShoot);
+                Driver.buttonPressed(Driver::DPDOWN, ()-> IntakeCommand);
+                Driver.buttonPressed(Driver::DPUP, ()-> OuttakeCommand);
             break;
         }
 

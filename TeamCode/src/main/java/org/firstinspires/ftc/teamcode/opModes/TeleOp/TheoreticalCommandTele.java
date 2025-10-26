@@ -80,7 +80,8 @@ public class TheoreticalCommandTele extends OpMode {
             follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         }
 
-        chamber.setChamberPos(0.125);
+        chamber.setChamberPos(0.875);
+        scheduler.run();
         teleHandler.TeleOp();
         turret.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true);
 

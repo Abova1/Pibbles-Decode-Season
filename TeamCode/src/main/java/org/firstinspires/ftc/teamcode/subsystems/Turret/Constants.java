@@ -13,7 +13,7 @@ class Constants {
     public static double turretOffsetX  = 0; // how far our turret is from middle of robot in x direction (positive x&y and negative x&y is normal, look from top down view of robot)
 
     public static double tSlope = 1.13273809524;
-    public static double Tp = 0.01875, Ti = 0.005, Td = 0.001475;
+    public static double Tp = 0.057, Ti = 0, Td = 0.00055;
     public static double kTx = 0.07; // how aggressively tx affects targetHeading
 
     public static double GearRatio = 3.92857142857;
